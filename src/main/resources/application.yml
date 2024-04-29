@@ -1,0 +1,63 @@
+server:
+  port: 8080
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    defer-datasource-initialization: true
+    database-platform: H2
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  jwt:
+    secret: thiskeyisjwtsecretkeyforprovidethejwttokenbutsystemsaidshort
+    token-validity-in-seconds: 1800
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: smtptest357@gmail.com
+    password: dizvoxbqzeplgngh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+  security:
+    oauth2:
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+        registration:
+          kakao:
+            client-id: 55b59bda35128367ab07058375e739dc
+            client-secret: RW23N898usWAcY98LEc5A2H7wR5mBAmQ
+            redirect-uri: '{baseUrl}/oauth2/callback/{registrationId}'
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            scope: profile_nickname
