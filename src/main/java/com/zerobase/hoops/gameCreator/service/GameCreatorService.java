@@ -7,9 +7,7 @@ import static com.zerobase.hoops.gameCreator.type.ErrorCode.NOT_UPDATE_MAN;
 import static com.zerobase.hoops.gameCreator.type.ErrorCode.NOT_UPDATE_WOMAN;
 import static com.zerobase.hoops.gameCreator.type.ErrorCode.USER_NOT_FOUND;
 
-import com.zerobase.hoops.entity.ApplyGameEntity;
 import com.zerobase.hoops.entity.GameEntity;
-import com.zerobase.hoops.entity.UserEntity;
 import com.zerobase.hoops.gameCreator.dto.GameDto.CreateRequest;
 import com.zerobase.hoops.gameCreator.dto.GameDto.CreateResponse;
 import com.zerobase.hoops.gameCreator.dto.GameDto.DeleteRequest;
@@ -21,7 +19,6 @@ import com.zerobase.hoops.gameCreator.repository.ApplyGameRepository;
 import com.zerobase.hoops.gameCreator.repository.GameRepository;
 import com.zerobase.hoops.gameCreator.repository.UserRepository;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
