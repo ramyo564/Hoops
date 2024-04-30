@@ -117,10 +117,10 @@ public class UserService {
     return true;
   }
 
-  public void confirmEmail(String id, String email, String certificationNumber)
-      throws Exception {
+  public void confirmEmail(
+      String id, String email, String certificationNumber) {
     if (!isConfirm(email, certificationNumber)) {
-      throw new Exception("Invalid CertificationNumber");
+      throw new CustomException(ErrorCode.INVALID_NUMBER);
     }
 
     UserEntity user = userRepository.findById(id);
@@ -130,11 +130,10 @@ public class UserService {
     userRepository.save(user);
   }
 
-  private boolean isConfirm(String email, String certificationNumber)
-      throws Exception {
+  private boolean isConfirm(String email, String certificationNumber) {
     boolean validatedEmail = emailRepository.hasKey(email);
     if (!validatedEmail) {
-      throw new Exception("Email Not Found.");
+      throw new CustomException(ErrorCode.WRONG_EMAIL);
     }
 
     return (validatedEmail && emailRepository

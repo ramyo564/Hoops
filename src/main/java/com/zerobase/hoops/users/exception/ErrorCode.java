@@ -12,6 +12,8 @@ public enum ErrorCode {
   INVALID_PATTERN(HttpStatus.BAD_REQUEST.value(), "형식에 맞게 입력 해야합니다."),
 
   MAIL_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 발송에 실패하였습니다."),
+  WRONG_EMAIL(HttpStatus.NO_CONTENT.value(), "잘못된 이메일 주소입니다."),
+  INVALID_NUMBER(HttpStatus.FORBIDDEN.value(), "유효하지 않은 인증번호입니다."),
 
   DUPLICATED_ID(HttpStatus.CONFLICT.value(), "이미 사용 중인 아이디입니다."),
   DUPLICATED_NICKNAME(HttpStatus.CONFLICT.value(), "이미 사용 중인 별명입니다."),
