@@ -27,7 +27,6 @@ public class UserEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "user_id",nullable = false)
   private int userId;
 
   @Column(nullable = false)
@@ -51,28 +50,26 @@ public class UserEntity {
   @Column(nullable = false)
   private String nickName;
 
-  @Column(name = "play_style")
   private String playStyle;
 
   private String ability;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name =
-      "user_id"))
+  @CollectionTable(
+      name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
   private List<String> roles;
 
   @CreationTimestamp
-  @Column(name = "create_at",nullable = false)
-  private LocalDateTime createAt;
+  @Column(nullable = false)
+  private LocalDateTime createDate;
 
-  @Column(name = "delete_at",nullable = false)
-  private LocalDateTime deleteAt;
+  private LocalDateTime deleteDate;
 
   @ColumnDefault("false")
-  @Column(name = "email_auth",nullable = false)
+  @Column(nullable = false)
   private boolean emailAuth;
 
-  public void verify() {
+  public void confirm() {
     this.emailAuth = true;
   }
 }

@@ -1,6 +1,6 @@
 package com.zerobase.hoops.users.config;
 
-import com.zerobase.hoops.users.filter.JwtAuthenticationFilter;
+import com.zerobase.hoops.users.auth.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;

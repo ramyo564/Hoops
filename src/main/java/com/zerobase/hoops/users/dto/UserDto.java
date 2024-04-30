@@ -24,8 +24,8 @@ public class UserDto {
   private String birthday;
   private String gender;
   private String nickName;
-  private LocalDateTime createAt;
-  private LocalDateTime deleteAt;
+  private LocalDateTime createDate;
+  private LocalDateTime deleteDate;
   private String playStyle;
   private String ability;
   private List<String> roles;
@@ -40,8 +40,8 @@ public class UserDto {
         .birthday(userEntity.getBirthday())
         .gender(userEntity.getGender())
         .nickName(userEntity.getNickName())
-        .createAt(userEntity.getCreateAt())
-        .deleteAt(userEntity.getDeleteAt())
+        .createDate(userEntity.getCreateDate())
+        .deleteDate(userEntity.getDeleteDate())
         .playStyle(userEntity.getPlayStyle())
         .ability(userEntity.getAbility())
         .roles(userEntity.getRoles())

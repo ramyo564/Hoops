@@ -85,7 +85,7 @@ public class SignUpDto {
     private String birthday;
     private String gender;
     private String nickName;
-    private LocalDateTime crateAt;
+    private LocalDateTime crateDate;
     private String playStyle;
     private String ability;
     private List<String> roles;
@@ -99,7 +99,7 @@ public class SignUpDto {
           .birthday(userDto.getBirthday())
           .gender(userDto.getGender())
           .nickName(userDto.getNickName())
-          .crateAt(userDto.getCreateAt())
+          .crateDate(userDto.getCreateDate())
           .playStyle(userDto.getPlayStyle())
           .ability(userDto.getAbility())
           .roles(userDto.getRoles())
