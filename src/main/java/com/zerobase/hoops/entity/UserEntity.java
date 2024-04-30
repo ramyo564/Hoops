@@ -1,9 +1,15 @@
 package com.zerobase.hoops.entity;
 
+import com.zerobase.hoops.users.type.AbilityType;
+import com.zerobase.hoops.users.type.GenderType;
+import com.zerobase.hoops.users.type.PlayStyleType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,13 +22,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
 
   @Id
@@ -44,23 +52,26 @@ public class UserEntity {
   @Column(nullable = false)
   private String birthday;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private String gender;
+  private GenderType gender;
 
   @Column(nullable = false)
   private String nickName;
 
-  private String playStyle;
+  @Enumerated(EnumType.STRING)
+  private PlayStyleType playStyle;
 
-  private String ability;
+  @Enumerated(EnumType.STRING)
+  private AbilityType ability;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
       name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
   private List<String> roles;
 
-  @CreationTimestamp
   @Column(nullable = false)
+  @CreatedDate
   private LocalDateTime createDate;
 
   private LocalDateTime deleteDate;

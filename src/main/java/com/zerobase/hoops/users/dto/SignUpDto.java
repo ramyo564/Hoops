@@ -1,11 +1,13 @@
 package com.zerobase.hoops.users.dto;
 
 import com.zerobase.hoops.entity.UserEntity;
+import com.zerobase.hoops.users.type.AbilityType;
+import com.zerobase.hoops.users.type.GenderType;
+import com.zerobase.hoops.users.type.PlayStyleType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,19 +57,17 @@ public class SignUpDto {
     private String ability;
 
     public static UserEntity toEntity(Request request) {
-      List<String> userRoles = new ArrayList<>();
-      userRoles.add("ROLE_USER");
       return UserEntity.builder()
           .id(request.getId())
           .password(request.getPassword())
           .email(request.getEmail())
           .name(request.getName())
           .birthday(request.getBirthday())
-          .gender(request.getGender())
+          .gender(GenderType.valueOf(request.getGender()))
           .nickName(request.getNickName())
-          .playStyle(request.getPlayStyle())
-          .ability(request.getAbility())
-          .roles(userRoles)
+          .playStyle(PlayStyleType.valueOf(request.getPlayStyle()))
+          .ability(AbilityType.valueOf(request.getAbility()))
+          .roles(List.of("ROLE_USER"))
           .build();
     }
   }

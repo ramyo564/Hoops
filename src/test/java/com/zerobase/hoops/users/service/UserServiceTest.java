@@ -6,6 +6,7 @@ import com.zerobase.hoops.entity.UserEntity;
 import com.zerobase.hoops.users.dto.SignUpDto;
 import com.zerobase.hoops.users.dto.UserDto;
 import com.zerobase.hoops.users.exception.CustomException;
+import com.zerobase.hoops.users.exception.ErrorCode;
 import com.zerobase.hoops.users.repository.EmailRepository;
 import com.zerobase.hoops.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -187,7 +188,8 @@ class UserServiceTest {
     userService.confirmEmail(id, email, certificationNumber);
 
     // then
-    UserEntity user = userRepository.findById(id);
+    UserEntity user = userRepository.findById(id)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     assertTrue(user.isEmailAuth());
   }
 

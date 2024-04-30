@@ -123,7 +123,8 @@ public class UserService {
       throw new CustomException(ErrorCode.INVALID_NUMBER);
     }
 
-    UserEntity user = userRepository.findById(id);
+    UserEntity user = userRepository.findById(id)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     user.confirm();
 
     emailRepository.removeCertificationNumber(email);

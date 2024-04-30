@@ -38,12 +38,12 @@ public class UserDto {
         .email(userEntity.getEmail())
         .name(userEntity.getName())
         .birthday(userEntity.getBirthday())
-        .gender(userEntity.getGender())
+        .gender(String.valueOf(userEntity.getGender()))
         .nickName(userEntity.getNickName())
         .createDate(userEntity.getCreateDate())
         .deleteDate(userEntity.getDeleteDate())
-        .playStyle(userEntity.getPlayStyle())
-        .ability(userEntity.getAbility())
+        .playStyle(String.valueOf(userEntity.getPlayStyle()))
+        .ability(String.valueOf(userEntity.getAbility()))
         .roles(userEntity.getRoles())
         .build();
   }
