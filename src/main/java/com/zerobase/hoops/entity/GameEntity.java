@@ -1,7 +1,5 @@
 package com.zerobase.hoops.entity;
 
-import com.zerobase.hoops.gameCreator.entity.UserEntity;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,37 +24,28 @@ import lombok.ToString;
 public class GameEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "game_id")
   private Long gameId;
 
   private String title;
 
   private String content;
 
-  @Column(name = "head_count")
   private Long headCount;
 
-  @Column(name = "field_status")
   private String fieldStatus;
 
-  @Column(name = "start_at")
-  private LocalDateTime startAt;
+  private LocalDateTime startDate;
 
-  @Column(name = "created_at")
-  private LocalDateTime createdAt;
+  private LocalDateTime createdDate;
 
-  @Column(name = "deleted_at")
-  private LocalDateTime deletedAt;
+  private LocalDateTime deletedDate;
 
-  @Column(name = "invite_yn")
   private Boolean inviteYn;
 
   private String address;
 
-  @Column(name = "city_name")
   private String cityName;
 
-  @Column(name = "match_format")
   private String matchFormat;
 
   @ManyToOne
