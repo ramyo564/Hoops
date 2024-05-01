@@ -48,6 +48,7 @@ public class CustomExceptionHandler {
           case "Pattern" -> ErrorCode.INVALID_PATTERN;
           case "Positive" -> ErrorCode.INVALID_PATTERN;
           case "Email" -> ErrorCode.INVALID_PATTERN;
+          case "Past" -> ErrorCode.PAST_BIRTHDAY;
           default -> errorCode;
         };
 

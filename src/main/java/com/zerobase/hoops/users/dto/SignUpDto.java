@@ -1,12 +1,16 @@
 package com.zerobase.hoops.users.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.zerobase.hoops.entity.UserEntity;
 import com.zerobase.hoops.users.type.AbilityType;
 import com.zerobase.hoops.users.type.GenderType;
 import com.zerobase.hoops.users.type.PlayStyleType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -44,8 +48,11 @@ public class SignUpDto {
     @NotBlank(message = "이름을 입력하세요.")
     private String name;
 
-    @NotBlank(message = "생년월일을 입력하세요.")
-    private String birthday;
+    @JsonFormat(shape = Shape.STRING,
+        pattern = "yyyyMMdd",
+        timezone = "Asia/Seoul")
+    @Past(message = "생년월일은 과거의 날짜만 입력 가능합니다.")
+    private LocalDate birthday;
 
     @NotBlank(message = "성별을 선택하세요.")
     private String gender;
@@ -82,7 +89,7 @@ public class SignUpDto {
     private String id;
     private String email;
     private String name;
-    private String birthday;
+    private LocalDate birthday;
     private String gender;
     private String nickName;
     private LocalDateTime crateDate;

@@ -15,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -50,7 +51,7 @@ public class UserEntity {
   private String name;
 
   @Column(nullable = false)
-  private String birthday;
+  private LocalDate birthday;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)

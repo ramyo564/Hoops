@@ -1,6 +1,7 @@
 package com.zerobase.hoops.users.dto;
 
 import com.zerobase.hoops.entity.UserEntity;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class UserDto {
 
   private String email;
   private String name;
-  private String birthday;
+  private LocalDate birthday;
   private String gender;
   private String nickName;
   private LocalDateTime createDate;
