@@ -1,4 +1,4 @@
-package com.zerobase.hoops.users.exception;
+package com.zerobase.hoops.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +26,10 @@ public enum ErrorCode {
   DUPLICATED_NICKNAME(HttpStatus.CONFLICT.value(), "이미 사용 중인 별명입니다."),
   DUPLICATED_EMAIL(HttpStatus.CONFLICT.value(), "이미 사용 중인 이메일입니다."),
   USER_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "아이디가 존재하지 않습니다."),
-  NOT_MATCHED_PASSWORD(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다.");
+  NOT_MATCHED_PASSWORD(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
+
+  // 블랙리스트
+  BAN_FOR_10DAYS(HttpStatus.BAD_REQUEST.value(), "10일 후에 다시 이용 가능합니다.");
 
   private final int statusCode;
   private final String description;

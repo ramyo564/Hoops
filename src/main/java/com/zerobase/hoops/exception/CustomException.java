@@ -1,4 +1,4 @@
-package com.zerobase.hoops.users.exception;
+package com.zerobase.hoops.exception;
 
 
 import lombok.AllArgsConstructor;

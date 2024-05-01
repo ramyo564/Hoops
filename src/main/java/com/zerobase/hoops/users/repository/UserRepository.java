@@ -1,5 +1,6 @@
 package com.zerobase.hoops.users.repository;
 
+import com.zerobase.hoops.entity.BlackListUserEntity;
 import com.zerobase.hoops.entity.UserEntity;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
   boolean existsByNickName(String nickName);
 
   Optional<UserEntity> findById(String id);
+
+  Optional<UserEntity> findByEmail(String email);
+
 }

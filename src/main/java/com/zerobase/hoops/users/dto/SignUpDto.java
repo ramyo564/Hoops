@@ -85,7 +85,7 @@ public class SignUpDto {
   @Builder
   public static class Response {
 
-    private int userId;
+    private Long userId;
     private String id;
     private String email;
     private String name;
