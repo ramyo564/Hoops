@@ -1,6 +1,5 @@
 package com.zerobase.hoops.entity;
 
-
 import com.zerobase.hoops.users.type.AbilityType;
 import com.zerobase.hoops.users.type.GenderType;
 import com.zerobase.hoops.users.type.PlayStyleType;
@@ -26,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -34,6 +34,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -43,6 +44,7 @@ public class UserEntity implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(nullable = false)
   private Long userId;
 
   @Column(nullable = false)
@@ -74,13 +76,12 @@ public class UserEntity implements UserDetails {
   private AbilityType ability;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(
-      name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
-  @Column
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name =
+      "user_id"))
   private List<String> roles;
 
-  @Column(nullable = false)
   @CreatedDate
+  @Column(nullable = false)
   private LocalDateTime createDate;
 
   private LocalDateTime deleteDate;
@@ -88,6 +89,10 @@ public class UserEntity implements UserDetails {
   @ColumnDefault("false")
   @Column(nullable = false)
   private boolean emailAuth;
+
+  public void verify() {
+    this.emailAuth = true;
+  }
 
   public void confirm() {
     this.emailAuth = true;
