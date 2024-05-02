@@ -82,9 +82,9 @@ public class UserEntity implements UserDetails {
 
   @CreatedDate
   @Column(nullable = false)
-  private LocalDateTime createDate;
+  private LocalDateTime createDateTime;
 
-  private LocalDateTime deleteDate;
+  private LocalDateTime deleteDateTime;
 
   @ColumnDefault("false")
   @Column(nullable = false)

@@ -44,7 +44,10 @@ public enum ErrorCode {
   NOT_UPDATE_STARTDATE(HttpStatus.BAD_REQUEST.value(), "변경 하려는 시작 시간이 기존에"
       + " 설정했던 시작 시간 보다 이후여야 합니다."),
   NOT_DELETE_STARTDATE(HttpStatus.BAD_REQUEST.value(),  "경기 시작 시간 30분 전에 "
-      + "경기 삭제 가능 합니다.");
+      + "경기 삭제 가능 합니다."),
+
+  // 서버 오류
+  INTERNAL_SERVER_ERROR(HttpStatus.BAD_REQUEST.value(),"내부 서버 오류");
 
   private final int statusCode;
   private final String description;
