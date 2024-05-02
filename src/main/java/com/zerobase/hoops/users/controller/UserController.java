@@ -1,10 +1,12 @@
 package com.zerobase.hoops.users.controller;
 
+import com.zerobase.hoops.security.TokenProvider;
 import com.zerobase.hoops.users.dto.SignUpDto;
 import com.zerobase.hoops.users.dto.UserDto;
 import com.zerobase.hoops.users.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+
+  private final TokenProvider tokenProvider;
 
   /**
    * 회원 가입
@@ -91,6 +95,15 @@ public class UserController {
     URI loginPage = new URI("/api/user/login");
 
     return ResponseEntity.status(HttpStatus.FOUND).location(loginPage).build();
+  }
+
+  /**
+   * 로그인 테스트용
+   */
+  @GetMapping("/testLogin")
+  public ResponseEntity<?> testLogin(@RequestParam(name = "email") String email) {
+    var token = this.tokenProvider.generateToken(email);
+    return ResponseEntity.ok(token);
   }
 
 }

@@ -45,6 +45,7 @@ public class CustomExceptionHandler {
 
         errorCode = switch (Objects.requireNonNull(bindResultCode)) {
           case "NotBlank" -> ErrorCode.INVALID_INPUT;
+          case "NotNull" -> ErrorCode.INVALID_INPUT;
           case "Pattern" -> ErrorCode.INVALID_PATTERN;
           case "Positive" -> ErrorCode.INVALID_PATTERN;
           case "Email" -> ErrorCode.INVALID_PATTERN;
