@@ -49,7 +49,7 @@ public class CustomExceptionHandler {
           case "Positive" -> ErrorCode.INVALID_PATTERN;
           case "Email" -> ErrorCode.INVALID_PATTERN;
           case "Past" -> ErrorCode.PAST_BIRTHDAY;
-          default -> errorCode;
+          default -> ErrorCode.INTERNAL_SERVER_ERROR;
         };
 
         details.add(field + " : " + defaultMessage);

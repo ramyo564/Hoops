@@ -29,7 +29,10 @@ public enum ErrorCode {
   NOT_MATCHED_PASSWORD(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
 
   // 블랙리스트
-  BAN_FOR_10DAYS(HttpStatus.BAD_REQUEST.value(), "10일 후에 다시 이용 가능합니다.");
+  BAN_FOR_10DAYS(HttpStatus.BAD_REQUEST.value(), "10일 후에 다시 이용 가능합니다."),
+
+  // 서버 오류
+  INTERNAL_SERVER_ERROR(HttpStatus.BAD_REQUEST.value(),"내부 서버 오류");
 
   private final int statusCode;
   private final String description;
