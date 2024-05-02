@@ -133,7 +133,7 @@ public class UserService implements UserDetailsService {
 
     UserEntity user = userRepository.findById(id)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    user.confirm();
+    //user.confirm();
 
     emailRepository.removeCertificationNumber(email);
     userRepository.save(user);

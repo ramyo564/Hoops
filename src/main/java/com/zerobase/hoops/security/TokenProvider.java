@@ -52,7 +52,7 @@ public class TokenProvider {
         .compact();
   }
 
-  private Claims parseClaims(String token) {
+  public Claims parseClaims(String token) {
     try {
       return Jwts.parser().setSigningKey(this.secretKey)
           .parseClaimsJws(token).getBody();

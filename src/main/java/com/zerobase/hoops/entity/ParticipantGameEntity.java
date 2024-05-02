@@ -4,6 +4,7 @@ import com.zerobase.hoops.gameCreator.type.CityName;
 import com.zerobase.hoops.gameCreator.type.FieldStatus;
 import com.zerobase.hoops.gameCreator.type.Gender;
 import com.zerobase.hoops.gameCreator.type.MatchFormat;
+import com.zerobase.hoops.gameCreator.type.ParticipantGameStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -21,11 +22,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity(name = "game")
+@Entity(name = "participant_game")
 @Getter
 @Setter
 @ToString
@@ -33,51 +33,35 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class GameEntity {
+public class ParticipantGameEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
-  private Long gameId;
-
-  @Column(nullable = false)
-  private String title;
-
-  @Column(nullable = false)
-  private String content;
-
-  @Column(nullable = false)
-  private Long headCount;
+  private Long participantId;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private FieldStatus fieldStatus;
-
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private Gender gender;
-
-  @Column(nullable = false)
-  private LocalDateTime startDate;
+  private ParticipantGameStatus status;
 
   @CreatedDate
   @Column(nullable = false)
   private LocalDateTime createdDate;
 
+  private LocalDateTime acceptedDate;
+
+  private LocalDateTime rejectedDate;
+
+  private LocalDateTime canceledDate;
+
+  private LocalDateTime withdrewDate;
+
+  private LocalDateTime kickoutDate;
+
   private LocalDateTime deletedDate;
 
-  @Column(nullable = false)
-  private Boolean inviteYn;
-
-  @Column(nullable = false)
-  private String address;
-
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private CityName cityName;
-
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private MatchFormat matchFormat;
+  @ManyToOne
+  @JoinColumn(name = "game_id")
+  private GameEntity gameEntity;
 
   @ManyToOne
   @JoinColumn(name = "user_id")

@@ -2,6 +2,10 @@ package com.zerobase.hoops.gameCreator.dto;
 
 
 import com.zerobase.hoops.entity.GameEntity;
+import com.zerobase.hoops.gameCreator.type.CityName;
+import com.zerobase.hoops.gameCreator.type.FieldStatus;
+import com.zerobase.hoops.gameCreator.type.Gender;
+import com.zerobase.hoops.gameCreator.type.MatchFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -32,10 +36,10 @@ public class GameDto {
     private Long headCount;
 
     @NotNull(message = "실내외는 필수 입력 값 입니다.")
-    private String fieldStatus;
+    private FieldStatus fieldStatus;
 
     @NotNull(message = "성별은 필수 입력 값 입니다.")
-    private String gender;
+    private Gender gender;
 
     @NotNull(message = "시작 날짜는 필수 입력 값 입니다.")
     private LocalDateTime startDate;
@@ -47,14 +51,8 @@ public class GameDto {
     @Size(max = 200, message = "주소는 최대 200자 입니다.")
     private String address;
 
-    @NotNull(message = "도시 이름은 필수 입력 값 입니다.")
-    private String cityName;
-
     @NotNull(message = "경기 형식은 필수 입력 값 입니다.")
-    private String matchFormat;
-
-    //TODO : 이부분 나중에 삭제 테스트 용도
-    private Long userId;
+    private MatchFormat matchFormat;
 
     public static GameEntity toEntity(CreateRequest request){
       return GameEntity.builder()
@@ -66,7 +64,6 @@ public class GameDto {
           .startDate(request.getStartDate())
           .inviteYn(request.getInviteYn())
           .address(request.getAddress())
-          .cityName(request.getCityName())
           .matchFormat(request.getMatchFormat())
           .build();
     }
@@ -84,9 +81,9 @@ public class GameDto {
 
     private Long headCount;
 
-    private String fieldStatus;
+    private FieldStatus fieldStatus;
 
-    private String gender;
+    private Gender gender;
 
     private LocalDateTime startDate;
 
@@ -96,9 +93,9 @@ public class GameDto {
 
     private String address;
 
-    private String cityName;
+    private CityName cityName;
 
-    private String matchFormat;
+    private MatchFormat matchFormat;
 
     public static CreateResponse toDto(GameEntity gameEntity){
       return CreateResponse.builder()
@@ -137,11 +134,11 @@ public class GameDto {
     @NotNull(message = "인원 수는 필수 입력 값 입니다.")
     private Long headCount;
 
-    @NotBlank(message = "실내외는 필수 입력 값 입니다.")
-    private String fieldStatus;
+    @NotNull(message = "실내외는 필수 입력 값 입니다.")
+    private FieldStatus fieldStatus;
 
     @NotNull(message = "성별은 필수 입력 값 입니다.")
-    private String gender;
+    private Gender gender;
 
     @NotNull(message = "시작 날짜는 필수 입력 값 입니다.")
     private LocalDateTime startDate;
@@ -153,14 +150,9 @@ public class GameDto {
     @Size(max = 200, message = "주소는 최대 200자 입니다.")
     private String address;
 
-    @NotNull(message = "도시 이름은 필수 입력 값 입니다.")
-    private String cityName;
-
     @NotNull(message = "경기 형식은 필수 입력 값 입니다.")
-    private String matchFormat;
+    private MatchFormat matchFormat;
 
-    //TODO : 이부분 나중에 삭제 테스트 용도
-    private Long userId;
   }
 
   @Getter
@@ -175,9 +167,9 @@ public class GameDto {
 
     private Long headCount;
 
-    private String fieldStatus;
+    private FieldStatus fieldStatus;
 
-    private String gender;
+    private Gender gender;
 
     private LocalDateTime startDate;
 
@@ -187,9 +179,9 @@ public class GameDto {
 
     private String address;
 
-    private String cityName;
+    private CityName cityName;
 
-    private String matchFormat;
+    private MatchFormat matchFormat;
 
     public static UpdateResponse toDto(GameEntity gameEntity){
       return UpdateResponse.builder()
@@ -217,8 +209,6 @@ public class GameDto {
     @NotNull(message = "게임 아이디는 필수 입력 값 입니다.")
     private Long gameId;
 
-    //TODO : 이부분 나중에 삭제 테스트 용도
-    private Long userId;
   }
 
   @Getter
@@ -233,9 +223,9 @@ public class GameDto {
 
     private Long headCount;
 
-    private String fieldStatus;
+    private FieldStatus fieldStatus;
 
-    private String gender;
+    private Gender gender;
 
     private LocalDateTime startDate;
 
@@ -247,9 +237,9 @@ public class GameDto {
 
     private String address;
 
-    private String cityName;
+    private CityName cityName;
 
-    private String matchFormat;
+    private MatchFormat matchFormat;
 
     public static DeleteResponse toDto(GameEntity gameEntity){
       return DeleteResponse.builder()

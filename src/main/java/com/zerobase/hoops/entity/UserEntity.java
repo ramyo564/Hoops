@@ -1,6 +1,5 @@
 package com.zerobase.hoops.entity;
 
-
 import com.zerobase.hoops.users.type.AbilityType;
 import com.zerobase.hoops.users.type.GenderType;
 import com.zerobase.hoops.users.type.PlayStyleType;
@@ -20,12 +19,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -34,6 +33,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -43,6 +43,7 @@ public class UserEntity implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(nullable = false)
   private Long userId;
 
   @Column(nullable = false)
@@ -74,13 +75,12 @@ public class UserEntity implements UserDetails {
   private AbilityType ability;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(
-      name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
-  @Column
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name =
+      "user_id"))
   private List<String> roles;
 
-  @Column(nullable = false)
   @CreatedDate
+  @Column(nullable = false)
   private LocalDateTime createDate;
 
   private LocalDateTime deleteDate;
@@ -89,7 +89,7 @@ public class UserEntity implements UserDetails {
   @Column(nullable = false)
   private boolean emailAuth;
 
-  public void confirm() {
+  public void verify() {
     this.emailAuth = true;
   }
 
@@ -101,25 +101,8 @@ public class UserEntity implements UserDetails {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    UserEntity that = (UserEntity) o;
-    return Objects.equals(id, that.id);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id);
-  }
-
-  @Override
   public String getUsername() {
-    return email;
+    return this.email;
   }
 
   @Override

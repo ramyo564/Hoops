@@ -1,24 +1,40 @@
 package com.zerobase.hoops.gameCreator.service;
 
-import static com.zerobase.hoops.gameCreator.type.ErrorCode.GAME_NOT_FOUND;
-import static com.zerobase.hoops.gameCreator.type.ErrorCode.NOT_GAME_CREATOR;
-import static com.zerobase.hoops.gameCreator.type.ErrorCode.NOT_UPDATE_HEADCOUNT;
-import static com.zerobase.hoops.gameCreator.type.ErrorCode.NOT_UPDATE_MAN;
-import static com.zerobase.hoops.gameCreator.type.ErrorCode.NOT_UPDATE_WOMAN;
-import static com.zerobase.hoops.gameCreator.type.ErrorCode.USER_NOT_FOUND;
+import static com.zerobase.hoops.exception.ErrorCode.ALREADY_GAME_CREATED;
+import static com.zerobase.hoops.exception.ErrorCode.GAME_NOT_FOUND;
+import static com.zerobase.hoops.exception.ErrorCode.NOT_AFTER_THIRTY_MINUTE;
+import static com.zerobase.hoops.exception.ErrorCode.NOT_DELETE_STARTDATE;
+import static com.zerobase.hoops.exception.ErrorCode.NOT_GAME_CREATOR;
+import static com.zerobase.hoops.exception.ErrorCode.NOT_UPDATE_HEADCOUNT;
+import static com.zerobase.hoops.exception.ErrorCode.NOT_UPDATE_MAN;
+import static com.zerobase.hoops.exception.ErrorCode.NOT_UPDATE_WOMAN;
+import static com.zerobase.hoops.exception.ErrorCode.USER_NOT_FOUND;
+import static com.zerobase.hoops.gameCreator.type.Gender.FEMALEONLY;
+import static com.zerobase.hoops.gameCreator.type.Gender.MALEONLY;
+import static com.zerobase.hoops.gameCreator.type.ParticipantGameStatus.ACCEPT;
+import static com.zerobase.hoops.gameCreator.type.ParticipantGameStatus.APPLY;
+import static com.zerobase.hoops.gameCreator.type.ParticipantGameStatus.DELETE;
+import static com.zerobase.hoops.users.type.GenderType.FEMALE;
+import static com.zerobase.hoops.users.type.GenderType.MALE;
 
 import com.zerobase.hoops.entity.GameEntity;
+import com.zerobase.hoops.entity.ParticipantGameEntity;
+import com.zerobase.hoops.exception.CustomException;
 import com.zerobase.hoops.gameCreator.dto.GameDto.CreateRequest;
 import com.zerobase.hoops.gameCreator.dto.GameDto.CreateResponse;
 import com.zerobase.hoops.gameCreator.dto.GameDto.DeleteRequest;
 import com.zerobase.hoops.gameCreator.dto.GameDto.DeleteResponse;
 import com.zerobase.hoops.gameCreator.dto.GameDto.UpdateRequest;
 import com.zerobase.hoops.gameCreator.dto.GameDto.UpdateResponse;
-import com.zerobase.hoops.gameCreator.exception.CustomException;
-import com.zerobase.hoops.gameCreator.repository.ApplyGameRepository;
 import com.zerobase.hoops.gameCreator.repository.GameRepository;
-import com.zerobase.hoops.gameCreator.repository.UserRepository;
+import com.zerobase.hoops.gameCreator.repository.ParticipantGameRepository;
+import com.zerobase.hoops.gameCreator.type.Gender;
+import com.zerobase.hoops.gameCreator.util.Util;
+import com.zerobase.hoops.security.TokenProvider;
+import com.zerobase.hoops.users.repository.UserRepository;
+import com.zerobase.hoops.users.type.GenderType;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,22 +46,67 @@ public class GameCreatorService {
 
   private final GameRepository gameRepository;
 
-  private final ApplyGameRepository applyGameRepository;
+  private final ParticipantGameRepository participantGameRepository;
 
   private final UserRepository userRepository;
 
+  private final TokenProvider tokenProvider;
+
   /**
-   * 게임 생성
+   * 경기 생성
    */
-  public CreateResponse createGame(CreateRequest request) throws Exception {
+  public CreateResponse createGame(CreateRequest request, String token) throws Exception {
     log.info("createGame start");
-    // 유저 아이디로 유저 조회
-    var user = this.userRepository.findById(request.getUserId())
+    // 이메일로 유저 조회
+    String email = this.tokenProvider.parseClaims(token.substring(7)).getSubject();
+
+    var user = this.userRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
+    // 같은 주소에 입력한 경기 시작 시간 30분전 ~ 30분후 경기가 있는지 검색
+    LocalDateTime startDatetime = request.getStartDate();
+    LocalDateTime beforeDatetime = startDatetime.minusMinutes(30);
+    LocalDateTime afterDateTime = startDatetime.plusMinutes(30);
+    LocalDateTime nowDateTime = LocalDateTime.now();
+
+    Long aroundGameCount = this.gameRepository
+        .countByStartDateBetweenAndAddressAndDeletedDateNull
+            (beforeDatetime, afterDateTime, request.getAddress())
+        .orElse(0L);
+
+    // 없으면
+    if(aroundGameCount == 0) {
+      // 경기 시작 시간이 현재 시간의 30분 이후 이면 경기 생성 가능 하다고 알림
+      if(beforeDatetime.isBefore(nowDateTime)) {
+        throw new CustomException(NOT_AFTER_THIRTY_MINUTE);
+      }
+    } else { // 있으면
+      // 설정한 경기 시작 시간 30분전 ~ 30분후 사이에 이미 열린 경기가 있다고 알림
+      throw new CustomException(ALREADY_GAME_CREATED);
+    }
+
+    // CREATOR 확인
+    boolean creatorFlag = false;
+    List<String> roles = user.getRoles();
+    for(String role : roles) {
+      if(role.equals("USER_CREATOR")) {
+        creatorFlag = true;
+        break;
+      }
+    }
+
+    // 없으면 CREATOR 추가
+    if(!creatorFlag) {
+      roles.add("ROLE_CREATOR");
+      user.setRoles(roles);
+      this.userRepository.save(user);
+    }
+
+    // 경기 생성
     GameEntity gameEntity = CreateRequest.toEntity(request);
 
     gameEntity.setUserEntity(user);
+    gameEntity.setCityName(Util.getCityName(request.getAddress()));
 
     this.gameRepository.save(gameEntity);
 
@@ -55,44 +116,75 @@ public class GameCreatorService {
   }
 
   /**
-   * 게임 수정
+   * 경기 수정
    */
-  public UpdateResponse updateGame(UpdateRequest request) throws Exception {
+  public UpdateResponse updateGame(UpdateRequest request, String token) throws Exception {
     log.info("updateGame start");
+
+    // 이메일로 유저 조회
+    String email = this.tokenProvider.parseClaims(token.substring(7)).getSubject();
+
+    var user = this.userRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
     // 게임 아이디로 게임 조회, 먼저 삭제 되었는지 조회
     var game =
         this.gameRepository.findByGameIdAndDeletedDateNull(request.getGameId())
         .orElseThrow(() -> new CustomException(GAME_NOT_FOUND));
 
-    //TODO : 자신이 경기 개최자가 아니면 수정 못하게 jwt 나오면 바꿔야함
-    if(request.getUserId() != game.getUserEntity().getUserId()) {
+    //자신이 경기 개최자가 아니면 수정 못하게
+    if(user.getUserId() != game.getUserEntity().getUserId()) {
       throw new CustomException(NOT_GAME_CREATOR);
     }
 
+    // 같은 주소에 입력한 경기 시작 시간 30분전 ~ 30분후 경기가 있는지 검색
+    LocalDateTime startDatetime = request.getStartDate();
+    LocalDateTime beforeDatetime = startDatetime.minusMinutes(30);
+    LocalDateTime afterDateTime = startDatetime.plusMinutes(30);
+    LocalDateTime nowDateTime = LocalDateTime.now();
+
+    Long aroundGameCount = this.gameRepository
+        .countByStartDateBetweenAndAddressAndDeletedDateNullAndGameIdNot
+            (beforeDatetime, afterDateTime, request.getAddress(), request.getGameId())
+        .orElse(0L);
+
+    // 없으면
+    if(aroundGameCount == 0) {
+      // 경기 시작 시간이 현재 시간의 30분 이후 이면 경기 생성 가능 하다고 알림
+      if(beforeDatetime.isBefore(nowDateTime)) {
+        throw new CustomException(NOT_AFTER_THIRTY_MINUTE);
+      }
+    } else { // 있으면
+      // 설정한 경기 시작 시간 30분전 ~ 30분후 사이에 이미 열린 경기가 있다고 알림
+      throw new CustomException(ALREADY_GAME_CREATED);
+    }
+
+
     // 변경 하려는 인원수가 수락한 인원수보다 적으면 에러 발생
     Long headCount =
-        this.applyGameRepository.countByStatusAndGameEntityGameId
-            ("ACCEPT", request.getGameId());
+        this.participantGameRepository.countByStatusAndGameEntityGameId
+            (ACCEPT, request.getGameId())
+            .orElse(0L);
 
     if(request.getHeadCount() < headCount) {
       throw new CustomException(NOT_UPDATE_HEADCOUNT);
     }
 
     // 변경하려는 성별 검사 ALL 일때는 패스
-    String gender = request.getGender();
-    if(gender.equals("MAN") || gender.equals("WOMAN")) {
-      String queryGender = request.getGender().equals("MAN") ? "WOMAN" : "MAN";
+    Gender gender = request.getGender();
+    if(gender == MALEONLY || gender == FEMALEONLY) {
+      GenderType queryGender = gender == MALEONLY ? FEMALE : MALE;
 
-      Long count = this.applyGameRepository
+      Long count = this.participantGameRepository
           .countByStatusAndGameEntityGameIdAndUserEntityGender
-          ("ACCEPT", request.getGameId(), queryGender);
+          (ACCEPT, request.getGameId(), queryGender)
+          .orElse(0L);
 
       log.info(count.toString());
 
       // 한명이라도 있으면 에러 발생
-      if(count > 1) {
-        if(gender.equals("MAN")) {
+      if(count >= 1) {
+        if(gender == MALEONLY) {
           throw new CustomException(NOT_UPDATE_MAN);
         } else {
           throw new CustomException(NOT_UPDATE_WOMAN);
@@ -111,7 +203,7 @@ public class GameCreatorService {
         .createdDate(game.getCreatedDate())
         .inviteYn(request.getInviteYn())
         .address(request.getAddress())
-        .cityName(request.getCityName())
+        .cityName(Util.getCityName(request.getAddress()))
         .matchFormat(request.getMatchFormat())
         .userEntity(game.getUserEntity())
         .build();
@@ -124,40 +216,61 @@ public class GameCreatorService {
   }
 
   /**
-   * 게임 삭제
+   * 경기 삭제
    */
-  public DeleteResponse delete(DeleteRequest request) throws Exception {
+  public DeleteResponse delete(DeleteRequest request, String token) throws Exception {
     log.info("deleteGame start");
 
-    // 게임 아이디로 게임 조회, 먼저 삭제 되었는지 조회
-    var game = this.gameRepository.findByGameIdAndDeletedDateNull(request.getGameId())
-        .orElseThrow(() -> new CustomException(GAME_NOT_FOUND));
-    // 유저 아이디로 유저 조회
-    var user = this.userRepository.findById(request.getUserId())
+    // 이메일로 유저 조회
+    String email = this.tokenProvider.parseClaims(token.substring(7)).getSubject();
+
+    var user = this.userRepository.findByEmail(email)
         .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
+    // 경기 아이디로 게임 조회, 먼저 삭제 되었는지 조회
+    var game = this.gameRepository.findByGameIdAndDeletedDateNull(request.getGameId())
+        .orElseThrow(() -> new CustomException(GAME_NOT_FOUND));
 
-    //TODO : 관리자 판별 jwt 나오면 바꿔야 함
-    boolean userFlag = false;
+    // CREATOR 판별
+    boolean creatorFlag = false;
 
     for(String role : user.getRoles()) {
-      if(role.equals("ROLE_USER")) {
-        userFlag = true;
+      if(role.equals("USER_CREATOR")) {
+        creatorFlag = true;
         break;
       }
     }
 
-    // 일반 유저 일때 관리자 일때는 PASS
-    if(userFlag) {
-      //TODO : 자신이 경기 개최자가 아니면 수정 못하게 jwt 나오면 바꿔야함
-      if(request.getUserId() != game.getUserEntity().getUserId()) {
+    // CREATOR 일때 관리자 일때는 PASS
+    if(creatorFlag) {
+      // 자신이 경기 개최자가 아니면 삭제 못하게
+      if(user.getUserId() != game.getUserEntity().getUserId()) {
         throw new CustomException(NOT_GAME_CREATOR);
       }
     }
 
-    // TODO : 게임 삭제 전에 ACCEPT 멤버들 다 WITHDRAW 그리고 APPLY 멤버들 다 CANCEL
+    // 경기 시작 30분 전에만 삭제 가능
+    LocalDateTime beforeDatetime = game.getStartDate().minusMinutes(30);
+    LocalDateTime nowDateTime = LocalDateTime.now();
 
+    if(nowDateTime.isAfter(beforeDatetime)) {
+      throw new CustomException(NOT_DELETE_STARTDATE);
+    }
 
+    // 경기 삭제 전에 ACCEPT, APPLY 멤버들 다 DELETE
+    List<ParticipantGameEntity> participantGameEntityList =
+        this.participantGameRepository.findByStatusInAndGameEntityGameId
+            (List.of(ACCEPT, APPLY), request.getGameId());
+
+    if(!participantGameEntityList.isEmpty()) {
+      for(ParticipantGameEntity entity : participantGameEntityList) {
+        entity.setStatus(DELETE);
+        entity.setDeletedDate(LocalDateTime.now());
+        this.participantGameRepository.save(entity);
+      }
+    }
+
+    // 경기 삭제
     GameEntity gameEntity = GameEntity.builder()
         .gameId(game.getGameId())
         .title(game.getTitle())
@@ -176,6 +289,20 @@ public class GameCreatorService {
         .build();
 
     this.gameRepository.save(gameEntity);
+
+    // 경기 삭제후 경기 개설한 것이 없다면 CREATOR 제거
+    if(creatorFlag) {
+      Long gameCreateCount =
+          this.gameRepository.countByDeletedDateNullAndUserEntityUserId(user.getUserId())
+              .orElse(0L);
+
+      if(gameCreateCount == 0) {
+        List<String> roles = user.getRoles();
+        roles.remove("ROLE_CREATOR");
+        user.setRoles(roles);
+        this.userRepository.save(user);
+      }
+    }
 
     log.info("deleteGame end");
 
