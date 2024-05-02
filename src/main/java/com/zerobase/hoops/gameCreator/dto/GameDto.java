@@ -2,6 +2,7 @@ package com.zerobase.hoops.gameCreator.dto;
 
 
 import com.zerobase.hoops.entity.GameEntity;
+import com.zerobase.hoops.entity.UserEntity;
 import com.zerobase.hoops.gameCreator.type.CityName;
 import com.zerobase.hoops.gameCreator.type.FieldStatus;
 import com.zerobase.hoops.gameCreator.type.Gender;
@@ -42,7 +43,7 @@ public class GameDto {
     private Gender gender;
 
     @NotNull(message = "시작 날짜는 필수 입력 값 입니다.")
-    private LocalDateTime startDate;
+    private LocalDateTime startDateTime;
 
     @NotNull(message = "친구 초대 여부는 필수 입력 값 입니다.")
     private Boolean inviteYn;
@@ -54,17 +55,18 @@ public class GameDto {
     @NotNull(message = "경기 형식은 필수 입력 값 입니다.")
     private MatchFormat matchFormat;
 
-    public static GameEntity toEntity(CreateRequest request){
+    public static GameEntity toEntity(CreateRequest request, UserEntity user){
       return GameEntity.builder()
           .title(request.getTitle())
           .content(request.getContent())
           .headCount(request.getHeadCount())
           .fieldStatus(request.getFieldStatus())
           .gender(request.getGender())
-          .startDate(request.getStartDate())
+          .startDateTime(request.getStartDateTime())
           .inviteYn(request.getInviteYn())
           .address(request.getAddress())
           .matchFormat(request.getMatchFormat())
+          .userEntity(user)
           .build();
     }
   }
@@ -85,9 +87,9 @@ public class GameDto {
 
     private Gender gender;
 
-    private LocalDateTime startDate;
+    private LocalDateTime startDateTime;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDateTime;
 
     private Boolean inviteYn;
 
@@ -104,8 +106,8 @@ public class GameDto {
           .headCount(gameEntity.getHeadCount())
           .fieldStatus(gameEntity.getFieldStatus())
           .gender(gameEntity.getGender())
-          .startDate(gameEntity.getStartDate())
-          .createdDate(gameEntity.getCreatedDate())
+          .startDateTime(gameEntity.getStartDateTime())
+          .createdDateTime(gameEntity.getCreatedDateTime())
           .inviteYn(gameEntity.getInviteYn())
           .address(gameEntity.getAddress())
           .cityName(gameEntity.getCityName())
@@ -141,7 +143,7 @@ public class GameDto {
     private Gender gender;
 
     @NotNull(message = "시작 날짜는 필수 입력 값 입니다.")
-    private LocalDateTime startDate;
+    private LocalDateTime startDateTime;
 
     @NotNull(message = "친구 초대 여부는 필수 입력 값 입니다.")
     private Boolean inviteYn;
@@ -171,9 +173,9 @@ public class GameDto {
 
     private Gender gender;
 
-    private LocalDateTime startDate;
+    private LocalDateTime startDateTime;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDateTime;
 
     private Boolean inviteYn;
 
@@ -190,8 +192,8 @@ public class GameDto {
           .headCount(gameEntity.getHeadCount())
           .fieldStatus(gameEntity.getFieldStatus())
           .gender(gameEntity.getGender())
-          .startDate(gameEntity.getStartDate())
-          .createdDate(gameEntity.getCreatedDate())
+          .startDateTime(gameEntity.getStartDateTime())
+          .createdDateTime(gameEntity.getCreatedDateTime())
           .inviteYn(gameEntity.getInviteYn())
           .address(gameEntity.getAddress())
           .cityName(gameEntity.getCityName())
@@ -227,11 +229,11 @@ public class GameDto {
 
     private Gender gender;
 
-    private LocalDateTime startDate;
+    private LocalDateTime startDateTime;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDateTime;
 
-    private LocalDateTime deletedDate;
+    private LocalDateTime deletedDateTime;
 
     private Boolean inviteYn;
 
@@ -248,9 +250,9 @@ public class GameDto {
           .headCount(gameEntity.getHeadCount())
           .fieldStatus(gameEntity.getFieldStatus())
           .gender(gameEntity.getGender())
-          .startDate(gameEntity.getStartDate())
-          .createdDate(gameEntity.getCreatedDate())
-          .deletedDate(gameEntity.getDeletedDate())
+          .startDateTime(gameEntity.getStartDateTime())
+          .createdDateTime(gameEntity.getCreatedDateTime())
+          .deletedDateTime(gameEntity.getDeletedDateTime())
           .inviteYn(gameEntity.getInviteYn())
           .address(gameEntity.getAddress())
           .cityName(gameEntity.getCityName())

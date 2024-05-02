@@ -1,9 +1,5 @@
 package com.zerobase.hoops.entity;
 
-import com.zerobase.hoops.gameCreator.type.CityName;
-import com.zerobase.hoops.gameCreator.type.FieldStatus;
-import com.zerobase.hoops.gameCreator.type.Gender;
-import com.zerobase.hoops.gameCreator.type.MatchFormat;
 import com.zerobase.hoops.gameCreator.type.ParticipantGameStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,19 +41,19 @@ public class ParticipantGameEntity {
 
   @CreatedDate
   @Column(nullable = false)
-  private LocalDateTime createdDate;
+  private LocalDateTime createdDateTime;
 
-  private LocalDateTime acceptedDate;
+  private LocalDateTime acceptedDateTime;
 
-  private LocalDateTime rejectedDate;
+  private LocalDateTime rejectedDateTime;
 
-  private LocalDateTime canceledDate;
+  private LocalDateTime canceledDateTime;
 
-  private LocalDateTime withdrewDate;
+  private LocalDateTime withdrewDateTime;
 
-  private LocalDateTime kickoutDate;
+  private LocalDateTime kickoutDateTime;
 
-  private LocalDateTime deletedDate;
+  private LocalDateTime deletedDateTime;
 
   @ManyToOne
   @JoinColumn(name = "game_id")

@@ -1,8 +1,7 @@
 package com.zerobase.hoops.gameCreator.controller;
 
 import com.zerobase.hoops.gameCreator.dto.GameDto;
-import com.zerobase.hoops.gameCreator.service.GameCreatorService;
-import jakarta.validation.Valid;
+import com.zerobase.hoops.gameCreator.service.GameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class GameController {
 
-  private final GameCreatorService gameCreatorService;
+  private final GameService gameService;
 
   /**
    * 게임 생성
@@ -29,7 +28,7 @@ public class GameController {
   @PostMapping("/game/create")
   public ResponseEntity<?> createGame(@RequestBody @Validated GameDto.CreateRequest request,
       @RequestHeader("Authorization") String token) throws Exception {
-    GameDto.CreateResponse result = this.gameCreatorService.createGame(request, token);
+    GameDto.CreateResponse result = this.gameService.createGame(request, token);
     return ResponseEntity.ok(result);
   }
 
@@ -39,7 +38,7 @@ public class GameController {
   @PutMapping("/game/update")
   public ResponseEntity<?> updateGame(@RequestBody @Validated GameDto.UpdateRequest request,
       @RequestHeader("Authorization") String token) throws Exception {
-    GameDto.UpdateResponse result = this.gameCreatorService.updateGame(request, token);
+    GameDto.UpdateResponse result = this.gameService.updateGame(request, token);
     return ResponseEntity.ok(result);
   }
 
@@ -49,7 +48,7 @@ public class GameController {
   @DeleteMapping("/game/delete")
   public ResponseEntity<?> deleteGame(@RequestBody @Validated GameDto.DeleteRequest request,
       @RequestHeader("Authorization") String token) throws Exception {
-    GameDto.DeleteResponse result = this.gameCreatorService.delete(request, token);
+    GameDto.DeleteResponse result = this.gameService.delete(request, token);
     return ResponseEntity.ok(result);
   }
 

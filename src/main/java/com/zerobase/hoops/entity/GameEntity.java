@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -57,13 +56,13 @@ public class GameEntity {
   private Gender gender;
 
   @Column(nullable = false)
-  private LocalDateTime startDate;
+  private LocalDateTime startDateTime;
 
   @CreatedDate
   @Column(nullable = false)
-  private LocalDateTime createdDate;
+  private LocalDateTime createdDateTime;
 
-  private LocalDateTime deletedDate;
+  private LocalDateTime deletedDateTime;
 
   @Column(nullable = false)
   private Boolean inviteYn;
