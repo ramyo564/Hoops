@@ -74,16 +74,15 @@ public class UserEntity implements UserDetails {
   private AbilityType ability;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(
-      name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
-  @Column
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name =
+      "user_id"))
   private List<String> roles;
 
   @Column(nullable = false)
   @CreatedDate
-  private LocalDateTime createDate;
+  private LocalDateTime createDateTime;
 
-  private LocalDateTime deleteDate;
+  private LocalDateTime deleteDateTime;
 
   @ColumnDefault("false")
   @Column(nullable = false)
