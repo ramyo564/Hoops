@@ -47,6 +47,9 @@ public class WebSecurityConfig {
         .authorizeHttpRequests(request -> request
             .requestMatchers("/", "/api/user/**",
                 "/swagger-ui/**", "/v3/api-docs/**",
+                //로그인 개발되면 해당 부분 삭제
+                "/report/user",
+                //--------------------
                 "/h2-console/**").permitAll()
             .requestMatchers("/api/auth/**")
             .hasAnyRole("USER", "CREATOR", "ADMIN")
@@ -79,7 +82,8 @@ public class WebSecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(
-      AuthenticationConfiguration authenticationConfiguration) throws Exception {
+      AuthenticationConfiguration authenticationConfiguration)
+      throws Exception {
     ProviderManager auth =
         (ProviderManager) authenticationConfiguration.getAuthenticationManager();
     return auth;
