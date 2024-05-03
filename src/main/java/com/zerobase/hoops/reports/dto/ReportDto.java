@@ -13,12 +13,10 @@ import lombok.Data;
 public class ReportDto {
 
 
-  @NotNull
   @NotBlank
   @Email(message = "본인의 올바른 이메일 주소를 입력해주세요")
   private String userEmail;
 
-  @NotNull
   @NotBlank
   @Email(message = "신고하려는 유저의 올바른 이메일 주소를 입력해주세요")
   private String reportedUserEmail;
