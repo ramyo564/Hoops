@@ -29,7 +29,8 @@ public class AuthService {
 
   public UserDto logInUser(LogInDto.Request request) {
 
-    UserEntity user = userRepository.findById(request.getId())
+    UserEntity user =
+        userRepository.findByIdAndDeleteDateTimeNull(request.getId())
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
     String password = request.getPassword();
