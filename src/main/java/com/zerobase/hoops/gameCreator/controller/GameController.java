@@ -2,6 +2,7 @@ package com.zerobase.hoops.gameCreator.controller;
 
 import com.zerobase.hoops.gameCreator.dto.GameDto;
 import com.zerobase.hoops.gameCreator.service.GameService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/game-creator")
 @RequiredArgsConstructor
+@Tag(name = "3. GAME")
 public class GameController {
 
   private final GameService gameService;
@@ -26,7 +28,8 @@ public class GameController {
    * 게임 생성
    */
   @PostMapping("/game/create")
-  public ResponseEntity<?> createGame(@RequestBody @Validated GameDto.CreateRequest request,
+  public ResponseEntity<?> createGame(
+      @RequestBody @Validated GameDto.CreateRequest request,
       @RequestHeader("Authorization") String token) throws Exception {
     GameDto.CreateResponse result = this.gameService.createGame(request, token);
     return ResponseEntity.ok(result);
@@ -36,7 +39,8 @@ public class GameController {
    * 게임 수정
    */
   @PutMapping("/game/update")
-  public ResponseEntity<?> updateGame(@RequestBody @Validated GameDto.UpdateRequest request,
+  public ResponseEntity<?> updateGame(
+      @RequestBody @Validated GameDto.UpdateRequest request,
       @RequestHeader("Authorization") String token) throws Exception {
     GameDto.UpdateResponse result = this.gameService.updateGame(request, token);
     return ResponseEntity.ok(result);
@@ -46,7 +50,8 @@ public class GameController {
    * 게임 삭제
    */
   @DeleteMapping("/game/delete")
-  public ResponseEntity<?> deleteGame(@RequestBody @Validated GameDto.DeleteRequest request,
+  public ResponseEntity<?> deleteGame(
+      @RequestBody @Validated GameDto.DeleteRequest request,
       @RequestHeader("Authorization") String token) throws Exception {
     GameDto.DeleteResponse result = this.gameService.delete(request, token);
     return ResponseEntity.ok(result);
