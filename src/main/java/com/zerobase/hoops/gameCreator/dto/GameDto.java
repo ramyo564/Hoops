@@ -25,6 +25,7 @@ public class GameDto {
   @AllArgsConstructor
   @Builder
   public static class CreateRequest {
+
     @NotBlank(message = "제목은 필수 입력 값 입니다.")
     @Size(max = 50, message = "제목은 최대 50자 입니다.")
     private String title;
@@ -55,7 +56,7 @@ public class GameDto {
     @NotNull(message = "경기 형식은 필수 입력 값 입니다.")
     private MatchFormat matchFormat;
 
-    public static GameEntity toEntity(CreateRequest request, UserEntity user){
+    public static GameEntity toEntity(CreateRequest request, UserEntity user) {
       return GameEntity.builder()
           .title(request.getTitle())
           .content(request.getContent())
@@ -77,6 +78,7 @@ public class GameDto {
   @AllArgsConstructor
   @Builder
   public static class CreateResponse {
+
     private String title;
 
     private String content;
@@ -99,7 +101,7 @@ public class GameDto {
 
     private MatchFormat matchFormat;
 
-    public static CreateResponse toDto(GameEntity gameEntity){
+    public static CreateResponse toDto(GameEntity gameEntity) {
       return CreateResponse.builder()
           .title(gameEntity.getTitle())
           .content(gameEntity.getContent())
@@ -122,6 +124,7 @@ public class GameDto {
   @AllArgsConstructor
   @Builder
   public static class UpdateRequest {
+
     @NotNull(message = "게임 아이디는 필수 입력 값 입니다.")
     private Long gameId;
 
@@ -163,6 +166,7 @@ public class GameDto {
   @AllArgsConstructor
   @Builder
   public static class UpdateResponse {
+
     private String title;
 
     private String content;
@@ -185,7 +189,7 @@ public class GameDto {
 
     private MatchFormat matchFormat;
 
-    public static UpdateResponse toDto(GameEntity gameEntity){
+    public static UpdateResponse toDto(GameEntity gameEntity) {
       return UpdateResponse.builder()
           .title(gameEntity.getTitle())
           .content(gameEntity.getContent())
@@ -208,6 +212,7 @@ public class GameDto {
   @AllArgsConstructor
   @Builder
   public static class DeleteRequest {
+
     @NotNull(message = "게임 아이디는 필수 입력 값 입니다.")
     private Long gameId;
 
@@ -219,6 +224,7 @@ public class GameDto {
   @AllArgsConstructor
   @Builder
   public static class DeleteResponse {
+
     private String title;
 
     private String content;
@@ -243,7 +249,7 @@ public class GameDto {
 
     private MatchFormat matchFormat;
 
-    public static DeleteResponse toDto(GameEntity gameEntity){
+    public static DeleteResponse toDto(GameEntity gameEntity) {
       return DeleteResponse.builder()
           .title(gameEntity.getTitle())
           .content(gameEntity.getContent())

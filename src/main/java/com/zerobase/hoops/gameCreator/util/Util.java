@@ -3,6 +3,7 @@ package com.zerobase.hoops.gameCreator.util;
 import com.zerobase.hoops.gameCreator.type.CityName;
 
 public class Util {
+
   public static CityName getCityName(String address) {
     String[] parts = address.split(" ");
 

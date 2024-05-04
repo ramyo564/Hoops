@@ -1,7 +1,6 @@
 package com.zerobase.hoops.gameCreator.repository;
 
 import com.zerobase.hoops.entity.ParticipantGameEntity;
-import com.zerobase.hoops.gameCreator.type.Gender;
 import com.zerobase.hoops.gameCreator.type.ParticipantGameStatus;
 import com.zerobase.hoops.users.type.GenderType;
 import java.util.List;
@@ -13,12 +12,16 @@ import org.springframework.stereotype.Repository;
 public interface ParticipantGameRepository extends
     JpaRepository<ParticipantGameEntity, Long> {
 
-  Optional<Long> countByStatusAndGameEntityGameId(ParticipantGameStatus participantGameStatus,
+  Optional<Long> countByStatusAndGameEntityGameId(
+      ParticipantGameStatus participantGameStatus,
       Long gameId);
 
-  List<ParticipantGameEntity> findByStatusInAndGameEntityGameId(List<ParticipantGameStatus> accept, Long gameId);
+  List<ParticipantGameEntity> findByStatusInAndGameEntityGameId(
+      List<ParticipantGameStatus> accept, Long gameId);
 
-  Optional<Long> countByStatusAndGameEntityGameIdAndUserEntityGender(ParticipantGameStatus participantGameStatus, Long gameId, GenderType queryGender);
+  Optional<Long> countByStatusAndGameEntityGameIdAndUserEntityGender(
+      ParticipantGameStatus participantGameStatus, Long gameId,
+      GenderType queryGender);
 }
 
 
