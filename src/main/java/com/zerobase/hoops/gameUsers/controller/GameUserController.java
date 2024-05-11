@@ -6,10 +6,12 @@ import com.zerobase.hoops.gameCreator.type.FieldStatus;
 import com.zerobase.hoops.gameCreator.type.Gender;
 import com.zerobase.hoops.gameCreator.type.MatchFormat;
 import com.zerobase.hoops.gameUsers.dto.GameSearchResponse;
+import com.zerobase.hoops.gameUsers.dto.MannerPointListResponse;
 import com.zerobase.hoops.gameUsers.dto.UserJoinsGameDto;
 import com.zerobase.hoops.gameUsers.service.GameUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
@@ -80,5 +82,11 @@ public class GameUserController {
     return ResponseEntity.ok(gameUserService.myLastGameList(page, size));
   }
 
+  @PreAuthorize("hasRole('USER')")
+  @GetMapping("/manner-point/{gameId}")
+  public ResponseEntity<List<MannerPointListResponse>> getMannerPoint(
+      @PathVariable("gameId") @NotBlank String gameId) {
+    return ResponseEntity.ok(gameUserService.getMannerPoint(gameId));
+  }
 
 }
