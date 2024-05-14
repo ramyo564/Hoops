@@ -26,14 +26,20 @@ import com.zerobase.hoops.invite.dto.InviteDto.CancelRequest;
 import com.zerobase.hoops.invite.dto.InviteDto.CancelResponse;
 import com.zerobase.hoops.invite.dto.InviteDto.CreateRequest;
 import com.zerobase.hoops.invite.dto.InviteDto.CreateResponse;
+import com.zerobase.hoops.invite.dto.InviteDto.InviteMyListResponse;
 import com.zerobase.hoops.invite.dto.InviteDto.ReceiveAcceptRequest;
 import com.zerobase.hoops.invite.dto.InviteDto.ReceiveAcceptResponse;
+import com.zerobase.hoops.invite.dto.InviteDto.ReceiveRejectRequest;
+import com.zerobase.hoops.invite.dto.InviteDto.ReceiveRejectResponse;
 import com.zerobase.hoops.invite.repository.InviteRepository;
 import com.zerobase.hoops.invite.type.InviteStatus;
 import com.zerobase.hoops.security.JwtTokenExtract;
 import com.zerobase.hoops.users.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -139,8 +145,6 @@ public class InviteService {
             InviteStatus.REQUEST)
         .orElseThrow(() -> new CustomException(NOT_INVITE_FOUND));
 
-    validFriendUser(inviteEntity.getReceiverUserEntity().getUserId());
-
     // 본인이 경기 초대 요청한 것만 취소 가능
     if(!Objects.equals(inviteEntity.getSenderUserEntity().getUserId(),
         user.getUserId())) {
@@ -208,6 +212,48 @@ public class InviteService {
     return ReceiveAcceptResponse.toDto(result);
   }
 
+  /**
+   * 경기 초대 요청 상대방 거절
+   */
+  public ReceiveRejectResponse receiveRejectInviteGame(
+      ReceiveRejectRequest request) {
+    setUpUser();
+
+    InviteEntity inviteEntity = inviteRepository
+        .findByInviteIdAndInviteStatus(request.getInviteId(),
+            InviteStatus.REQUEST)
+        .orElseThrow(() -> new CustomException(NOT_INVITE_FOUND));
+
+    // 본인이 받은 초대 요청만 거절 가능
+    if(!Objects.equals(inviteEntity.getReceiverUserEntity().getUserId(),
+        user.getUserId())) {
+      throw new CustomException(NOT_SELF_INVITE_REQUEST);
+    }
+
+    InviteEntity result = InviteEntity.toRejectEntity(inviteEntity);
+
+    inviteRepository.save(result);
+
+    return ReceiveRejectResponse.toDto(result);
+  }
+
+  /**
+   * 내가 초대 요청 받은 리스트 조회
+   */
+  public List<InviteMyListResponse> getInviteRequestList() {
+    setUpUser();
+
+    List<InviteEntity> inviteEntityList =
+        inviteRepository.findByInviteStatusAndReceiverUserEntityUserId
+        (InviteStatus.REQUEST, user.getUserId());
+
+    List<InviteMyListResponse> result = inviteEntityList.stream()
+        .map(InviteMyListResponse::toDto)
+        .collect(Collectors.toList());
+
+    return result;
+  }
+
   public void setUpUser() {
     Long userId = jwtTokenExtract.currentUser().getUserId();
 
@@ -226,7 +272,4 @@ public class InviteService {
       throw new CustomException(NOT_FOUND_ACCEPT_FRIEND);
     }
   }
-
-
-
 }
