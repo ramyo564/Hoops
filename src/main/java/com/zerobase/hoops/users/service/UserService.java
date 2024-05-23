@@ -7,7 +7,7 @@ import com.zerobase.hoops.exception.CustomException;
 import com.zerobase.hoops.exception.ErrorCode;
 import com.zerobase.hoops.users.provider.CertificationProvider;
 import com.zerobase.hoops.users.provider.EmailProvider;
-import com.zerobase.hoops.users.repository.EmailRepository;
+import com.zerobase.hoops.users.repository.redis.EmailRepository;
 import com.zerobase.hoops.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
@@ -77,7 +77,7 @@ public class UserService implements UserDetailsService {
   }
 
   public boolean idCheck(String id) {
-    boolean isExistId = userRepository.existsById(id);
+    boolean isExistId = userRepository.existsByIdAndDeletedDateTimeNull(id);
     if (isExistId) {
       throw new CustomException(ErrorCode.DUPLICATED_ID);
     }
@@ -88,7 +88,7 @@ public class UserService implements UserDetailsService {
   public boolean emailCheck(String email) {
     try {
       boolean isExistEmail =
-          userRepository.existsByEmail(email);
+          userRepository.existsByEmailAndDeletedDateTimeNull(email);
       if (isExistEmail) {
         throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
       }
@@ -102,7 +102,7 @@ public class UserService implements UserDetailsService {
   public boolean nickNameCheck(String nickName) {
     try {
       boolean isExistNickname =
-          userRepository.existsByNickName(nickName);
+          userRepository.existsByNickNameAndDeletedDateTimeNull(nickName);
       if (isExistNickname) {
         throw new CustomException(ErrorCode.DUPLICATED_NICKNAME);
       }
@@ -148,7 +148,7 @@ public class UserService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String email)
       throws UsernameNotFoundException {
-    return userRepository.findByEmail(email)
+    return userRepository.findByEmailAndDeletedDateTimeNull(email)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
   }
 
