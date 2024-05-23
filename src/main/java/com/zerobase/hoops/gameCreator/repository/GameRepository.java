@@ -11,19 +11,16 @@ import org.springframework.stereotype.Repository;
 public interface GameRepository extends
     JpaRepository<GameEntity, Long> {
 
-  long countByStartDateTimeBetweenAndAddressAndDeletedDateTimeNull(
-      LocalDateTime beforeDatetime, LocalDateTime afterDateTime,
-      String address);
-
   Optional<GameEntity> findByGameIdAndDeletedDateTimeNull(Long gameId);
 
-  long countByDeletedDateTimeNullAndUserEntityUserId(Long userId);
-
-  long countByStartDateTimeBetweenAndAddressAndDeletedDateTimeNullAndGameIdNot(
-      LocalDateTime beforeDatetime, LocalDateTime afterDateTime,
-      String address, Long gameId);
-
   List<GameEntity> findByUserEntityUserIdAndDeletedDateTimeNull(Long userId);
+
+  boolean existsByStartDateTimeBetweenAndAddressAndDeletedDateTimeNull(
+      LocalDateTime beforeDatetime,
+      LocalDateTime afterDateTime, String address);
+
+  boolean existsByStartDateTimeBetweenAndAddressAndDeletedDateTimeNullAndGameIdNot(
+      LocalDateTime beforeDatetime, LocalDateTime afterDateTime, String address, Long gameId);
 }
 
 
