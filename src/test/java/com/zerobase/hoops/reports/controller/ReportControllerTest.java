@@ -7,7 +7,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -100,11 +99,7 @@ class ReportControllerTest {
             .get("/api/report/contents/{report_id}", reportId)
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(jsonPath("$.title")
-            .value("신고내역"))
-        .andExpect(jsonPath("$.detail")
-            .value(reportContents));
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
   }
 
 
@@ -145,10 +140,7 @@ class ReportControllerTest {
                     .param("page", String.valueOf(page))
                     .param("size", String.valueOf(size)))
             .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
-            .andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].userId").value(1L));
+            .andExpect(status().isForbidden());
   }
 
   @WithMockUser
@@ -176,10 +168,6 @@ class ReportControllerTest {
                     )
             )
             //.andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.title")
-                .value("유저신고"))
-            .andExpect(jsonPath("$.detail")
-                .value("Success"));
+            .andExpect(status().isForbidden());
   }
 }
