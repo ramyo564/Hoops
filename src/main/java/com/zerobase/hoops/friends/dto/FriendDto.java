@@ -3,6 +3,7 @@ package com.zerobase.hoops.friends.dto;
 import com.zerobase.hoops.entity.FriendEntity;
 import com.zerobase.hoops.entity.UserEntity;
 import com.zerobase.hoops.friends.type.FriendStatus;
+import com.zerobase.hoops.invite.type.InviteStatus;
 import com.zerobase.hoops.users.type.AbilityType;
 import com.zerobase.hoops.users.type.GenderType;
 import com.zerobase.hoops.users.type.PlayStyleType;
@@ -345,7 +346,30 @@ public class FriendDto {
           .friendId(friendEntity.getFriendId())
           .build();
     }
+  }
 
+  @Getter
+  @ToString
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class InviteListResponse {
+
+    private Long userId;
+
+    private LocalDate birthday;
+
+    private GenderType gender;
+
+    private String nickName;
+
+    private PlayStyleType playStyle;
+
+    private AbilityType ability;
+
+    private String mannerPoint;
+
+    private InviteStatus status;
   }
 
   @Getter

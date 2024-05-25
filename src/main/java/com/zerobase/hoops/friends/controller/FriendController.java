@@ -8,6 +8,7 @@ import com.zerobase.hoops.friends.dto.FriendDto.CancelRequest;
 import com.zerobase.hoops.friends.dto.FriendDto.CancelResponse;
 import com.zerobase.hoops.friends.dto.FriendDto.DeleteRequest;
 import com.zerobase.hoops.friends.dto.FriendDto.DeleteResponse;
+import com.zerobase.hoops.friends.dto.FriendDto.InviteListResponse;
 import com.zerobase.hoops.friends.dto.FriendDto.RejectRequest;
 import com.zerobase.hoops.friends.dto.FriendDto.RejectResponse;
 import com.zerobase.hoops.friends.dto.FriendDto.ListResponse;
@@ -97,6 +98,16 @@ public class FriendController {
           direction = Direction.ASC) Pageable pageable) {
     List<ListResponse> result = friendService.getMyFriends(pageable);
     return ResponseEntity.ok(Collections.singletonMap("myFriendList", result));
+  }
+
+  @Operation(summary = "경기 초대 친구 리스트 조회")
+  @GetMapping("/invite/list")
+  public ResponseEntity<Page<InviteListResponse>> getMyInviteList(
+      @RequestParam Long gameId,
+      @PageableDefault(size = 10, page = 0) Pageable pageable) {
+    Page<InviteListResponse> result =
+        friendService.getMyInviteList(gameId, pageable);
+    return ResponseEntity.ok(result);
   }
 
   @Operation(summary = "내가 친구 요청 받은 리스트 조회")

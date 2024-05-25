@@ -24,6 +24,7 @@ import com.zerobase.hoops.friends.dto.FriendDto.CancelRequest;
 import com.zerobase.hoops.friends.dto.FriendDto.CancelResponse;
 import com.zerobase.hoops.friends.dto.FriendDto.DeleteRequest;
 import com.zerobase.hoops.friends.dto.FriendDto.DeleteResponse;
+import com.zerobase.hoops.friends.dto.FriendDto.InviteListResponse;
 import com.zerobase.hoops.friends.dto.FriendDto.RejectRequest;
 import com.zerobase.hoops.friends.dto.FriendDto.RejectResponse;
 import com.zerobase.hoops.friends.dto.FriendDto.ListResponse;
@@ -281,6 +282,20 @@ public class FriendService {
     friendEntityPage.stream().forEach(friendEntity -> {
       result.add(ListResponse.toDto(friendEntity));
     });
+
+    return result;
+  }
+
+  /**
+   * 경기 초대 친구 리스트 조회
+   */
+  public Page<InviteListResponse> getMyInviteList(Long gameId,
+      Pageable pageable) {
+    setUpUser();
+
+    Page<InviteListResponse> result =
+        friendCustomRepository.findByMyInviteFriendList
+            (user.getUserId(), gameId, pageable);
 
     return result;
   }
