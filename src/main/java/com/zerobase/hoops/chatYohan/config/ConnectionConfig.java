@@ -28,6 +28,13 @@ public class ConnectionConfig implements WebSocketMessageBrokerConfigurer {
             "http://127.0.0.1:5001",
             "http://localhost:5173",
             "https://hoops-frontend-jet.vercel.app",
+            "https://hoops.services");
+    registry.addEndpoint("/ws")
+        .setAllowedOrigins(
+            "http://127.0.0.1:8080",
+            "http://127.0.0.1:5001",
+            "http://localhost:5173",
+            "https://hoops-frontend-jet.vercel.app",
             "https://hoops.services")
         .withSockJS();
     log.info("STOMP endpoints registered.");
