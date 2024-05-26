@@ -113,6 +113,7 @@ public class FriendCustomRepositoryImpl implements FriendCustomRepository {
         .leftJoin(invite)
         .on(friend.friendUserEntity.userId.eq(invite.receiverUserEntity.userId)
             .and(invite.inviteStatus.eq(InviteStatus.REQUEST))
+            .and(invite.gameEntity.gameId.eq(gameId))
         );
 
     // Pageable에서 페이지 번호와 페이지 크기 가져오기
@@ -134,6 +135,7 @@ public class FriendCustomRepositoryImpl implements FriendCustomRepository {
         .leftJoin(invite)
         .on(friend.friendUserEntity.userId.eq(invite.receiverUserEntity.userId)
             .and(invite.inviteStatus.eq(InviteStatus.REQUEST))
+            .and(invite.gameEntity.gameId.eq(gameId))
         )
         .orderBy(user.nickName.asc())
         .offset((long) pageNumber * pageSize)
