@@ -84,7 +84,7 @@ class NotificationControllerTest {
 
     // when
     ResultActions result = this.mockMvc.perform(
-        get("/subscribe")
+        get("/api/subscribe")
             .with(user(user))
             .accept(MediaType.TEXT_EVENT_STREAM_VALUE)
             .header("lastEventId", "1_1631593143664")
@@ -116,7 +116,7 @@ class NotificationControllerTest {
     // then
     ResultActions result =
         mockMvc.perform(
-                get("/notifications")
+                get("/api/notifications")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
