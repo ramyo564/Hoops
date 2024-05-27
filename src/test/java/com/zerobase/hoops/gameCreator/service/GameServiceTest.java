@@ -637,8 +637,8 @@ class GameServiceTest {
 
     inviteEntityList.forEach(invite -> {
       verify(inviteRepository).save(invite);
-      assertEquals(InviteStatus.CANCEL, invite.getInviteStatus());
-      assertNotNull(invite.getCanceledDateTime());
+      assertEquals(InviteStatus.DELETE, invite.getInviteStatus());
+      assertNotNull(invite.getDeletedDateTime());
     });
 
     assertEquals(response.getGameId(), result.getGameId());
