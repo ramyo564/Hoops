@@ -57,6 +57,7 @@ public class WebSecurityConfig {
                 "/v3/api-docs/**",
                 "/api/auth/login",
                 "/api/oauth2/login/kakao",
+                "/api/oauth2/kakao",
                 "/api/game-user/**",
                 "/chat",
                 "/pub/**",
