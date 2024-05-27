@@ -373,6 +373,7 @@ public class GameDto {
           .deletedDateTime(LocalDateTime.now())
           .inviteYn(game.getInviteYn())
           .address(game.getAddress())
+          .placeName(game.getPlaceName())
           .latitude(game.getLatitude())
           .longitude(game.getLongitude())
           .cityName(game.getCityName())
