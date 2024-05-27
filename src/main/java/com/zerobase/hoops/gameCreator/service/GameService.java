@@ -308,14 +308,14 @@ public class GameService {
       participantGameRepository.save(participantGame);
     });
 
-    // 해당 경기에 초대 신청된 것들 다 CANCEL
+    // 해당 경기에 초대 신청된 것들 다 DELETE
     List<InviteEntity> inviteEntityList = inviteRepository
         .findByInviteStatusAndGameEntityGameId
             (InviteStatus.REQUEST, game.getGameId());
 
     inviteEntityList.forEach(invite -> {
-      invite.setInviteStatus(InviteStatus.CANCEL);
-      invite.setCanceledDateTime(LocalDateTime.now());
+      invite.setInviteStatus(InviteStatus.DELETE);
+      invite.setDeletedDateTime(LocalDateTime.now());
       inviteRepository.save(invite);
     });
 
