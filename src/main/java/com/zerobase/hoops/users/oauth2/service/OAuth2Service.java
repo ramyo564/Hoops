@@ -45,7 +45,7 @@ public class OAuth2Service {
 
   public String responseUrl() {
     return authorizationUri + "?client_id=" + clientId +
-        "&redirect_uri=http://localhost:5173/kakao/callback"
+        "&redirect_uri=https://hoops-frontend-jet.vercel.app/kakao/callback"
         + "&response_type=code";
   }
 
@@ -127,7 +127,7 @@ public class OAuth2Service {
     params.add("grant_type", "authorization_code");
     params.add("client_id", clientId);
     params.add("client_secret", clientSecret);
-    params.add("redirect_uri", "http://localhost:5173/kakao/callback");
+    params.add("redirect_uri", "https://hoops-frontend-jet.vercel.app/kakao/callback");
     params.add("code", code);
 
     HttpEntity<MultiValueMap<String, String>> kakaoRequest =
