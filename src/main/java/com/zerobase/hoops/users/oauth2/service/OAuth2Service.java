@@ -78,7 +78,7 @@ public class OAuth2Service {
         && !userRepository.existsByIdAndDeletedDateTimeNull("kakao_" + id)) {
       KakaoDto.Request user = kakaoUserDto(
           id,
-          kakaoAccount.getEmail(),
+          "kakao_" + kakaoAccount.getEmail(),
           properties.getNickname()
           , "MALE");
 
@@ -86,7 +86,7 @@ public class OAuth2Service {
     } else if (!userRepository.existsByIdAndDeletedDateTimeNull("kakao_" + id)) {
       KakaoDto.Request user = kakaoUserDto(
           id,
-          kakaoAccount.getEmail(),
+          "kakao_" + kakaoAccount.getEmail(),
           properties.getNickname()
           , kakaoAccount.getGender());
 
