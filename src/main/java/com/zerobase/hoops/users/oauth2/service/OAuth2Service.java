@@ -129,7 +129,7 @@ public class OAuth2Service {
     params.add("grant_type", "authorization_code");
     params.add("client_id", clientId);
     params.add("client_secret", clientSecret);
-    params.add("redirect_uri", "https://hoops.services.vercel.app/api/oatuh2/kakao");
+    params.add("redirect_uri", "https://hoops.services/api/oatuh2/kakao");
     params.add("code", code);
 
     HttpEntity<MultiValueMap<String, String>> kakaoRequest =

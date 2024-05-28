@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       FilterChain filterChain) throws ServletException, IOException {
 
     String accessToken = resolveTokenFromRequest(request);
+    log.info("accessToken: {}", accessToken);
     try {
       if(accessToken != null && tokenProvider.validateToken(accessToken)) {
         Authentication auth = tokenProvider.getAuthentication(accessToken);
@@ -69,6 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private boolean isPublicPath(String requestURI) {
+    log.info("requestURI: {}", requestURI);
     List<String> publicPaths = List.of(
         "/api/user", "/api/auth/login", "/api/oauth2/login/kakao",
         "/api/oauth2/kakao", "/swagger-ui", "/v3/api-docs", "/api/game-user",
