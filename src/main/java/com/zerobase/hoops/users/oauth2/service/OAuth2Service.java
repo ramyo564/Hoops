@@ -13,7 +13,6 @@ import com.zerobase.hoops.users.oauth2.dto.KakaoUserInfoDto.Properties;
 import com.zerobase.hoops.users.repository.UserRepository;
 import com.zerobase.hoops.users.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,9 +49,9 @@ public class OAuth2Service {
         + "&response_type=code";
   }
 
-  public UserDto kakaoLogin(String code, HttpSession session)
+  public UserDto kakaoLogin(String code)
       throws IOException {
-    KakaoUserInfoDto kakaoUser = getKakaoUserInfoDto(code, session);
+    KakaoUserInfoDto kakaoUser = getKakaoUserInfoDto(code);
     Properties properties = kakaoUser.getProperties();
     KakaoAccount kakaoAccount = kakaoUser.getKakao_account();
     String id = "kakao_" + kakaoUser.getId().toString();
@@ -97,12 +96,12 @@ public class OAuth2Service {
     return authService.logInUser(logInDto);
   }
 
-  private KakaoUserInfoDto getKakaoUserInfoDto(String code, HttpSession session)
+  private KakaoUserInfoDto getKakaoUserInfoDto(String code)
       throws JsonProcessingException {
     ResponseEntity<String> accessTokenResponse = requestAccessToken(code);
     KakaoOAuthTokenDto kakaoOAuthTokenDto = getAccessToken(accessTokenResponse);
     ResponseEntity<String> userInfoResponse =
-        requestUserInfo(kakaoOAuthTokenDto, session);
+        requestUserInfo(kakaoOAuthTokenDto);
 
     return getUserInfo(userInfoResponse);
   }
@@ -146,8 +145,7 @@ public class OAuth2Service {
   }
 
   public ResponseEntity<String> requestUserInfo(
-      KakaoOAuthTokenDto oAuthTokenDto, HttpSession session
-  ) {
+      KakaoOAuthTokenDto oAuthTokenDto) {
     HttpHeaders headers = new HttpHeaders();
     RestTemplate restTemplate = new RestTemplate();
     headers.add("Authorization",
@@ -155,9 +153,6 @@ public class OAuth2Service {
 
     HttpEntity<MultiValueMap<String, String>> request =
         new HttpEntity<>(headers);
-
-    session.setAttribute("kakaoToken", oAuthTokenDto.getAccess_token());
-    session.setAttribute("kakaoRefreshToken", oAuthTokenDto.getRefresh_token());
 
     return restTemplate.exchange("https://kapi.kakao.com/v2/user/me",
         HttpMethod.GET, request, String.class);

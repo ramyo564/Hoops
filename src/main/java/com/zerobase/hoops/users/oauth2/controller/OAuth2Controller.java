@@ -9,7 +9,6 @@ import com.zerobase.hoops.users.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +40,10 @@ public class OAuth2Controller {
 
   @GetMapping("/kakao")
   public ResponseEntity<Response> kakaoLogin(
-      @RequestParam(name = "code") String code, HttpSession session)
+      @RequestParam(name = "code") String code)
       throws IOException {
     log.info("카카오 API 서버 code : " + code);
-    UserDto userDto = oAuth2Service.kakaoLogin(code, session);
+    UserDto userDto = oAuth2Service.kakaoLogin(code);
     TokenDto tokenDto = authService.getToken(userDto);
 
     HttpHeaders responseHeaders = new HttpHeaders();
