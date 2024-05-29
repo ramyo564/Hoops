@@ -53,9 +53,9 @@ public class FriendCustomRepositoryImpl implements FriendCustomRepository {
         .leftJoin(friend)
         .on(
             user.userId.eq(friend.friendUserEntity.userId)
-            .and(friend.userEntity.userId.eq(userId))
-            .and(friend.status.in
-                (List.of(FriendStatus.ACCEPT, FriendStatus.APPLY)))
+                .and(friend.userEntity.userId.eq(userId))
+                .and(friend.status.eq(FriendStatus.ACCEPT))
+                .and(friend.status.ne(FriendStatus.APPLY))
         )
         .where(user.nickName.likeIgnoreCase("%" + nickName + "%")
             .and(user.userId.notIn(excludedIds))
@@ -74,9 +74,9 @@ public class FriendCustomRepositoryImpl implements FriendCustomRepository {
         .leftJoin(friend)
         .on(
             user.userId.eq(friend.friendUserEntity.userId)
-            .and(friend.userEntity.userId.eq(userId))
-            .and(friend.status.in
-                (List.of(FriendStatus.ACCEPT, FriendStatus.APPLY)))
+                .and(friend.userEntity.userId.eq(userId))
+                .and(friend.status.eq(FriendStatus.ACCEPT))
+                .and(friend.status.ne(FriendStatus.APPLY))
         )
         .where(user.nickName.likeIgnoreCase("%" + nickName + "%")
             .and(user.userId.notIn(excludedIds))
