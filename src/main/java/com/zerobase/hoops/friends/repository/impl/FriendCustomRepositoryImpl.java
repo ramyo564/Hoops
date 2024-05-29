@@ -54,12 +54,15 @@ public class FriendCustomRepositoryImpl implements FriendCustomRepository {
         .on(
             user.userId.eq(friend.friendUserEntity.userId)
                 .and(friend.userEntity.userId.eq(userId))
-                .and(friend.status.eq(FriendStatus.ACCEPT))
-                .and(friend.status.ne(FriendStatus.APPLY))
         )
-        .where(user.nickName.likeIgnoreCase("%" + nickName + "%")
-            .and(user.userId.notIn(excludedIds))
-            .and(user.deletedDateTime.isNull()));
+        .where(
+            user.nickName.like("%" + nickName + "%")
+                .and(user.userId.notIn(excludedIds))
+                .and(user.deletedDateTime.isNull())
+                .and(
+                    friend.status.isNull().or(friend.status.eq(FriendStatus.ACCEPT))
+                )
+        );
 
     // Pageable에서 페이지 번호와 페이지 크기 가져오기
     int pageNumber = pageable.getPageNumber();
@@ -75,12 +78,16 @@ public class FriendCustomRepositoryImpl implements FriendCustomRepository {
         .on(
             user.userId.eq(friend.friendUserEntity.userId)
                 .and(friend.userEntity.userId.eq(userId))
-                .and(friend.status.eq(FriendStatus.ACCEPT))
-                .and(friend.status.ne(FriendStatus.APPLY))
         )
-        .where(user.nickName.likeIgnoreCase("%" + nickName + "%")
-            .and(user.userId.notIn(excludedIds))
-            .and(user.deletedDateTime.isNull()))
+        .where(
+            user.nickName.like("%" + nickName + "%")
+                .and(user.userId.notIn(excludedIds))
+                .and(user.deletedDateTime.isNull())
+                .and(
+                    friend.status.isNull().or(friend.status.eq(FriendStatus.ACCEPT))
+                )
+        )
+
         .orderBy(user.nickName.asc())
         .offset((long) pageNumber * pageSize)
         .limit(pageSize).fetch();
