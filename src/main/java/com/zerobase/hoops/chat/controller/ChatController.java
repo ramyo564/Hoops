@@ -1,5 +1,7 @@
-package com.zerobase.hoops.chat.chat;
+package com.zerobase.hoops.chat.controller;
 
+import com.zerobase.hoops.chat.chat.ChatMessage;
+import com.zerobase.hoops.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -36,9 +38,15 @@ public class ChatController {
       @DestinationVariable String gameId,
       StompHeaderAccessor headerAccessor
   ) {
-
     String token = headerAccessor.getFirstNativeHeader("Authorization");
-    chatService.addUser(chatMessage,gameId,token);
+    chatService.addUser(chatMessage, gameId, token);
+  }
+
+  @MessageMapping("/loadMessages/{gameId}")
+  public void loadMessages(@DestinationVariable String gameId,
+      StompHeaderAccessor headerAccessor) {
+    String token = headerAccessor.getFirstNativeHeader("Authorization");
+    chatService.loadMessagesAndSend(gameId, token);
   }
 }
 

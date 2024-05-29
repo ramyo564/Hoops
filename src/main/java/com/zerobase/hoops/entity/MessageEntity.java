@@ -30,6 +30,8 @@ public class MessageEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "message_id", nullable = false)
   private Long messageId;
+  
+  private Long sessionId;
 
   @Column(columnDefinition = "TEXT")
   private String content;
