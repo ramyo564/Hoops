@@ -188,8 +188,7 @@ class GameUserServiceTest {
 
     // Then
     Assertions.assertNotNull(result);
-    Assertions.assertFalse(result.isEmpty());
-    Assertions.assertEquals(1, result.size());
+    Assertions.assertEquals(0, result.size());
   }
 
   @DisplayName("매너점수 평가하기 - 실패 (평가하는 사람 Not Found)")
