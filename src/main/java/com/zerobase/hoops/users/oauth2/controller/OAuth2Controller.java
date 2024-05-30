@@ -1,6 +1,5 @@
 package com.zerobase.hoops.users.oauth2.controller;
 
-import com.zerobase.hoops.manager.service.ManagerService;
 import com.zerobase.hoops.users.dto.KakaoDto;
 import com.zerobase.hoops.users.dto.KakaoDto.Response;
 import com.zerobase.hoops.users.dto.TokenDto;
@@ -29,7 +28,6 @@ public class OAuth2Controller {
 
   private final OAuth2Service oAuth2Service;
   private final AuthService authService;
-  private final ManagerService managerService;
 
   /**
    * 카카오 로그인
@@ -46,12 +44,7 @@ public class OAuth2Controller {
       throws IOException {
     log.info("카카오 API 서버 code : " + code);
     UserDto userDto = oAuth2Service.kakaoLogin(code);
-
-    managerService.checkBlackList(userDto.getId());
-
     TokenDto tokenDto = authService.getToken(userDto);
-
-
 
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.set("Authorization", tokenDto.getAccessToken());

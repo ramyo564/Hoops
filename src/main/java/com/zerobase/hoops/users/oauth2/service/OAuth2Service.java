@@ -3,6 +3,7 @@ package com.zerobase.hoops.users.oauth2.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.hoops.entity.UserEntity;
+import com.zerobase.hoops.manager.service.ManagerService;
 import com.zerobase.hoops.users.dto.KakaoDto;
 import com.zerobase.hoops.users.dto.LogInDto;
 import com.zerobase.hoops.users.dto.UserDto;
@@ -31,6 +32,7 @@ public class OAuth2Service {
 
   private final UserRepository userRepository;
   private final AuthService authService;
+  private final ManagerService managerService;
 
   @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
   String clientId;
@@ -165,6 +167,7 @@ public class OAuth2Service {
   }
 
   public LogInDto.Request kakaoUserLogin(String id) {
+    managerService.checkBlackList(id);
     return LogInDto.Request.builder()
         .id(id)
         .password("kakao")
