@@ -30,7 +30,7 @@ public class ManagerService {
 
   public void getBlackList(String loginId){
     blackListUserRepository
-        .findByBlackUser_IdAndEndDateAfter(
+        .findByBlackUser_IdAndBlackUser_DeletedDateTimeNullAndEndDateAfter(
             loginId, LocalDate.now())
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_BLACKLIST));
   }
@@ -62,7 +62,7 @@ public class ManagerService {
             ErrorCode.USER_NOT_FOUND));
 
     Optional<BlackListUserEntity> alreadyBlackUser =
-        blackListUserRepository.findByBlackUser_IdAndEndDateAfter(
+        blackListUserRepository.findByBlackUser_IdAndBlackUser_DeletedDateTimeNullAndEndDateAfter(
             reportedUserEntity.getId(), LocalDate.now());
 
     if (alreadyBlackUser.isEmpty()) {
@@ -77,11 +77,7 @@ public class ManagerService {
 
   public void checkBlackList(String blackUserId) {
     Optional<BlackListUserEntity> blackUser = blackListUserRepository
-        .findByBlackUser_EmailAndEndDateAfter(blackUserId,
-            LocalDate.now());
-    Optional<BlackListUserEntity> blackUser2 = blackListUserRepository
-        .findByBlackUser_EmailAndEndDateAfter(blackUserId,
-            LocalDate.now());
+        .findByBlackUser_IdAndBlackUser_DeletedDateTimeNullAndEndDateAfter(blackUserId, LocalDate.now());
     if (blackUser.isEmpty()) {
       return;
     }
@@ -94,7 +90,7 @@ public class ManagerService {
 
   public void unLockBlackList(UnLockBlackListDto request) {
     BlackListUserEntity blackUser = blackListUserRepository
-        .findByBlackUser_IdAndEndDateAfter(
+        .findByBlackUser_IdAndBlackUser_DeletedDateTimeNullAndEndDateAfter(
             request.getBlackUserId(), LocalDate.now())
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_BLACKLIST));
     blackUser.unLockBlackList();
