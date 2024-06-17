@@ -30,8 +30,6 @@ import com.zerobase.hoops.gameCreator.type.Gender;
 import com.zerobase.hoops.gameCreator.type.MatchFormat;
 import com.zerobase.hoops.invite.repository.InviteRepository;
 import com.zerobase.hoops.invite.type.InviteStatus;
-import com.zerobase.hoops.security.JwtTokenExtract;
-import com.zerobase.hoops.users.repository.UserRepository;
 import com.zerobase.hoops.users.type.AbilityType;
 import com.zerobase.hoops.users.type.GenderType;
 import com.zerobase.hoops.users.type.PlayStyleType;
@@ -60,12 +58,6 @@ class GameServiceTest {
   private GameService gameService;
 
   @Mock
-  private JwtTokenExtract jwtTokenExtract;
-
-  @Mock
-  private UserRepository userRepository;
-
-  @Mock
   private ParticipantGameRepository participantGameRepository;
 
   @Mock
@@ -91,7 +83,6 @@ class GameServiceTest {
   private GameEntity expectedOtherCreatedGame;
 
   private ParticipantGameEntity expectedCreatorParticipantGame;
-
 
   private ChatRoomEntity expectedCreatedChatRoom;
 
@@ -240,8 +231,6 @@ class GameServiceTest {
         .gameEntity(game)
         .build();
 
-    getCurrentUser(requestUser);
-
     // 이미 예정된 게임이 없는 상황을 가정
     checkGame(createRequest.getStartDateTime(), createRequest.getAddress(),
         false);
@@ -262,7 +251,7 @@ class GameServiceTest {
     });
 
     // when
-    gameService.validCreateGame(createRequest);
+    gameService.validCreateGame(createRequest, requestUser);
 
     // Then
 
@@ -301,7 +290,7 @@ class GameServiceTest {
         .address("테스트 주소")
         .build();
 
-    getCurrentUser(requestUser);
+    
 
     //해당 시간 범위에 이미 경기가 존재한다고 가정
     checkGame(createRequest.getStartDateTime(), createRequest.getAddress(),
@@ -309,7 +298,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validCreateGame(createRequest);
+      gameService.validCreateGame(createRequest, requestUser);
     });
 
     // then
@@ -325,7 +314,7 @@ class GameServiceTest {
         .address("테스트 주소")
         .build();
 
-    getCurrentUser(requestUser);
+    
 
     // 이미 예정된 게임이 없는 상황을 가정합니다.
     checkGame(createRequest.getStartDateTime(), createRequest.getAddress(),
@@ -333,7 +322,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validCreateGame(createRequest);
+      gameService.validCreateGame(createRequest, requestUser);
     });
 
     // Then
@@ -351,7 +340,7 @@ class GameServiceTest {
         .address("테스트 주소")
         .build();
 
-    getCurrentUser(requestUser);
+    
 
     //해당 시간 범위에 이미 경기가 없다고 가정
     checkGame(createRequest.getStartDateTime(), createRequest.getAddress(),
@@ -359,7 +348,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validCreateGame(createRequest);
+      gameService.validCreateGame(createRequest, requestUser);
     });
 
     // then
@@ -376,8 +365,7 @@ class GameServiceTest {
         .matchFormat(MatchFormat.FIVEONFIVE)
         .address("테스트 주소")
         .build();
-
-    getCurrentUser(requestUser);
+    
 
     //해당 시간 범위에 이미 경기가 없다고 가정
     checkGame(createRequest.getStartDateTime(), createRequest.getAddress(),
@@ -385,7 +373,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validCreateGame(createRequest);
+      gameService.validCreateGame(createRequest, requestUser);
     });
 
     // then
@@ -417,7 +405,7 @@ class GameServiceTest {
         .thenReturn(participantGameEntityList);
 
     // when
-    DetailResponse detailResponse = gameService.getGameDetail(gameId);
+    DetailResponse detailResponse = gameService.validGetGameDetail(gameId);
 
     // Then
     assertEquals(expectedDetailResponse, detailResponse);
@@ -444,9 +432,7 @@ class GameServiceTest {
         .build();
 
     GameEntity game = UpdateRequest.toEntity(updateRequest, expectedCreatedGame);
-
-    getCurrentUser(requestUser);
-
+    
     // 경기 조회
     getGame(updateRequest.getGameId(), expectedCreatedGame);
 
@@ -461,7 +447,7 @@ class GameServiceTest {
     when(gameRepository.save(game)).thenReturn(game);
 
     // when
-    gameService.validUpdateGame(updateRequest);
+    gameService.validUpdateGame(updateRequest, requestUser);
 
     // Then
     assertEquals(expectedUpdatedGame, game);
@@ -476,15 +462,13 @@ class GameServiceTest {
         .startDateTime(LocalDateTime.now().plusHours(1))
         .address("서울 마포구 와우산로13길 6 지하1,2층 (서교동)")
         .build();
-
-    getCurrentUser(requestUser);
-
+    
     // 경기 조회
     getGame(updateRequest.getGameId(), expectedOtherCreatedGame);
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validUpdateGame(updateRequest);
+      gameService.validUpdateGame(updateRequest, requestUser);
     });
 
     // Then
@@ -502,8 +486,6 @@ class GameServiceTest {
         .address("서울 마포구 와우산로13길 6 지하1,2층 (서교동)")
         .build();
 
-    getCurrentUser(requestUser);
-
     // 경기 조회
     getGame(updateRequest.getGameId(), expectedCreatedGame);
 
@@ -513,7 +495,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validUpdateGame(updateRequest);
+      gameService.validUpdateGame(updateRequest, requestUser);
     });
 
     // Then
@@ -530,8 +512,6 @@ class GameServiceTest {
         .address("서울 마포구 와우산로13길 6 지하1,2층 (서교동)")
         .build();
 
-    getCurrentUser(requestUser);
-
     // 경기 조회
     getGame(updateRequest.getGameId(), expectedCreatedGame);
 
@@ -541,7 +521,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validUpdateGame(updateRequest);
+      gameService.validUpdateGame(updateRequest, requestUser);
     });
 
     // Then
@@ -559,8 +539,6 @@ class GameServiceTest {
         .address("서울 마포구 와우산로13길 6 지하1,2층 (서교동)")
         .build();
 
-    getCurrentUser(requestUser);
-
     // 경기 조회
     getGame(updateRequest.getGameId(), expectedCreatedGame);
 
@@ -573,7 +551,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validUpdateGame(updateRequest);
+      gameService.validUpdateGame(updateRequest, requestUser);
     });
 
     // Then
@@ -592,8 +570,6 @@ class GameServiceTest {
         .address("서울 마포구 와우산로13길 6 지하1,2층 (서교동)")
         .build();
 
-    getCurrentUser(requestUser);
-
     // 경기 조회
     getGame(updateRequest.getGameId(), expectedCreatedGame);
 
@@ -610,7 +586,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validUpdateGame(updateRequest);
+      gameService.validUpdateGame(updateRequest, requestUser);
     });
 
     // Then
@@ -629,8 +605,6 @@ class GameServiceTest {
         .address("서울 마포구 와우산로13길 6 지하1,2층 (서교동)")
         .build();
 
-    getCurrentUser(requestUser);
-
     // 경기 조회
     getGame(updateRequest.getGameId(), expectedCreatedGame);
 
@@ -647,7 +621,7 @@ class GameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validUpdateGame(updateRequest);
+      gameService.validUpdateGame(updateRequest, requestUser);
     });
 
     // Then
@@ -737,8 +711,6 @@ class GameServiceTest {
 
     List<InviteEntity> expectedCanceledInviteList = List.of(cancelInvite);
 
-    getCurrentUser(requestUser);
-
     // 경기 조회
     getGame(gameId, expectedCreatedGame);
 
@@ -780,7 +752,7 @@ class GameServiceTest {
     when(gameRepository.save(game)).thenReturn(game);
 
     // when
-    gameService.validDeleteGame(deleteRequest);
+    gameService.validDeleteGame(deleteRequest, requestUser);
 
     // Then
     assertEquals(expectedDeletedGame, game);
@@ -830,8 +802,6 @@ class GameServiceTest {
     ParticipantGameEntity withdrewPartEntity =
         ParticipantGameEntity.setWithdraw(otherParticipantEntity, clock);
 
-    getCurrentUser(otherUser);
-
     // 경기 조회
     getGame(deleteRequest.getGameId(), expectedCreatedGame);
 
@@ -845,7 +815,7 @@ class GameServiceTest {
         .thenReturn(withdrewPartEntity);
 
     // when
-    gameService.validDeleteGame(deleteRequest);
+    gameService.validDeleteGame(deleteRequest, otherUser);
 
     // Then
     assertEquals(expectedWithdrewParticipantGameEntity, withdrewPartEntity);
@@ -861,25 +831,16 @@ class GameServiceTest {
 
     expectedCreatedGame.setStartDateTime(LocalDateTime.now().plusMinutes(15));
 
-    getCurrentUser(requestUser);
-
     // 경기 조회
     getGame(deleteRequest.getGameId(), expectedCreatedGame);
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      gameService.validDeleteGame(deleteRequest);
+      gameService.validDeleteGame(deleteRequest, requestUser);
     });
 
     // Then
     assertEquals(ErrorCode.NOT_DELETE_STARTDATE, exception.getErrorCode());
-  }
-
-  private void getCurrentUser(UserEntity user) {
-    when(jwtTokenExtract.currentUser()).thenReturn(user);
-
-    when(userRepository.findById(user.getId())).thenReturn(
-        Optional.of(user));
   }
 
   // 시간 범위에 해당하는 경기가 존재하는지 체크 (경기 생성)

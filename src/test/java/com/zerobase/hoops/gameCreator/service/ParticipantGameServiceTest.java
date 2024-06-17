@@ -6,7 +6,6 @@ import static com.zerobase.hoops.gameCreator.type.ParticipantGameStatus.KICKOUT;
 import static com.zerobase.hoops.gameCreator.type.ParticipantGameStatus.REJECT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.zerobase.hoops.alarm.repository.EmitterRepository;
@@ -26,8 +25,6 @@ import com.zerobase.hoops.gameCreator.type.FieldStatus;
 import com.zerobase.hoops.gameCreator.type.Gender;
 import com.zerobase.hoops.gameCreator.type.MatchFormat;
 import com.zerobase.hoops.gameCreator.type.ParticipantGameStatus;
-import com.zerobase.hoops.security.JwtTokenExtract;
-import com.zerobase.hoops.users.repository.UserRepository;
 import com.zerobase.hoops.users.type.AbilityType;
 import com.zerobase.hoops.users.type.GenderType;
 import com.zerobase.hoops.users.type.PlayStyleType;
@@ -60,12 +57,6 @@ class ParticipantGameServiceTest {
 
   @Mock
   private NotificationService notificationService;
-
-  @Mock
-  private JwtTokenExtract jwtTokenExtract;
-
-  @Mock
-  private UserRepository userRepository;
 
   @Mock
   private ParticipantGameRepository participantGameRepository;
@@ -211,15 +202,13 @@ class ParticipantGameServiceTest {
         .map(ListResponse::toDto)
         .toList();
 
-    getCurrentUser(createdUser);
-
     getGame(gameId, expectedCreatedGame);
 
     getParticipantPage(APPLY, gameId, pageable, expectedPage);
 
     // when
     List<ListResponse> result = participantGameService
-        .validApplyParticipantList(gameId, pageable);
+        .validApplyParticipantList(gameId, pageable, createdUser);
 
     // Then
     assertEquals(expectedList, result);
@@ -233,13 +222,11 @@ class ParticipantGameServiceTest {
 
     Pageable pageable = PageRequest.of(0, 10);
 
-    getCurrentUser(createdUser);
-
     getGame(gameId, expectedOtherCreatedGame);
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validApplyParticipantList(gameId, pageable);
+      participantGameService.validApplyParticipantList(gameId, pageable, createdUser);
     });
 
     // Then
@@ -272,16 +259,14 @@ class ParticipantGameServiceTest {
     List<ListResponse> expectedList = expectedPage.stream()
         .map(ListResponse::toDto)
         .toList();
-
-    getCurrentUser(createdUser);
-
+    
     getGame(gameId, expectedCreatedGame);
 
     getParticipantPage(ACCEPT, gameId, pageable, expectedPage);
 
     // when
     List<ListResponse> result = participantGameService
-        .validAcceptParticipantList(gameId, pageable);
+        .validAcceptParticipantList(gameId, pageable, createdUser);
 
     // Then
     assertEquals(expectedList, result);
@@ -304,7 +289,7 @@ class ParticipantGameServiceTest {
     ParticipantGameEntity acceptParticipantGame =
         ParticipantGameEntity.setAccept(expectedApplyParticipantGame, clock);
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 정보 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -320,7 +305,7 @@ class ParticipantGameServiceTest {
         .thenReturn(acceptParticipantGame);
 
     // when
-    participantGameService.validAcceptParticipant(request);
+    participantGameService.validAcceptParticipant(request, createdUser);
 
     // Then
     assertEquals(expectedAcceptParticipantGame, acceptParticipantGame);
@@ -340,7 +325,7 @@ class ParticipantGameServiceTest {
         .user(createdUser)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 정보 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -348,7 +333,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validAcceptParticipant(request);
+      participantGameService.validAcceptParticipant(request, createdUser);
     });
 
     // Then
@@ -370,7 +355,7 @@ class ParticipantGameServiceTest {
         .game(expectedOtherCreatedGame)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 정보 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -381,7 +366,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validAcceptParticipant(request);
+      participantGameService.validAcceptParticipant(request, createdUser);
     });
 
     // Then
@@ -402,7 +387,7 @@ class ParticipantGameServiceTest {
         .user(createdUser)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -413,7 +398,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validAcceptParticipant(request);
+      participantGameService.validAcceptParticipant(request, createdUser);
     });
 
     // Then
@@ -428,7 +413,7 @@ class ParticipantGameServiceTest {
         .participantId(2L)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -442,7 +427,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validAcceptParticipant(request);
+      participantGameService.validAcceptParticipant(request, createdUser);
     });
 
     // Then
@@ -476,7 +461,7 @@ class ParticipantGameServiceTest {
     ParticipantGameEntity rejectParticipantGame =
         ParticipantGameEntity.setReject(expectedApplyParticipantGame, clock);
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -489,7 +474,7 @@ class ParticipantGameServiceTest {
         .thenReturn(rejectParticipantGame);
 
     // when
-    participantGameService.validRejectParticipant(request);
+    participantGameService.validRejectParticipant(request, createdUser);
 
     // Then
     assertEquals(expectedRejectParticipantGame, rejectParticipantGame);
@@ -509,7 +494,7 @@ class ParticipantGameServiceTest {
         .user(createdUser)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -517,7 +502,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validRejectParticipant(request);
+      participantGameService.validRejectParticipant(request, createdUser);
     });
 
     // Then
@@ -539,7 +524,7 @@ class ParticipantGameServiceTest {
         .game(expectedOtherCreatedGame)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), APPLY,
@@ -550,7 +535,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validRejectParticipant(request);
+      participantGameService.validRejectParticipant(request, createdUser);
     });
 
     // Then
@@ -585,7 +570,7 @@ class ParticipantGameServiceTest {
     ParticipantGameEntity kickoutParticipantGame =
         ParticipantGameEntity.setKickout(expectedAcceptParticipantGame, clock);
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), ACCEPT,
@@ -598,7 +583,7 @@ class ParticipantGameServiceTest {
         .thenReturn(kickoutParticipantGame);
 
     // when
-    participantGameService.validKickoutParticipant(request);
+    participantGameService.validKickoutParticipant(request, createdUser);
 
     // Then
     assertEquals(expectedKickoutParticipantGame, kickoutParticipantGame);
@@ -618,7 +603,7 @@ class ParticipantGameServiceTest {
         .user(createdUser)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), ACCEPT,
@@ -626,7 +611,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validKickoutParticipant(request);
+      participantGameService.validKickoutParticipant(request, createdUser);
     });
 
     // Then
@@ -648,7 +633,7 @@ class ParticipantGameServiceTest {
         .game(expectedOtherCreatedGame)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), ACCEPT,
@@ -659,7 +644,7 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validKickoutParticipant(request);
+      participantGameService.validKickoutParticipant(request, createdUser);
     });
 
     // Then
@@ -681,7 +666,7 @@ class ParticipantGameServiceTest {
         .user(createdUser)
         .build();
 
-    getCurrentUser(createdUser);
+    
 
     // 경기 참가 조회
     getParticipantGame(request.getParticipantId(), ACCEPT,
@@ -692,21 +677,13 @@ class ParticipantGameServiceTest {
 
     // when
     CustomException exception = assertThrows(CustomException.class, () -> {
-      participantGameService.validKickoutParticipant(request);
+      participantGameService.validKickoutParticipant(request, createdUser);
     });
 
     // Then
     assertEquals(ErrorCode.ALREADY_GAME_START, exception.getErrorCode());
   }
 
-
-  // 로그인 한 유저 조회
-  private void getCurrentUser(UserEntity user) {
-    when(jwtTokenExtract.currentUser()).thenReturn(user);
-
-    when(userRepository.findById(anyLong())).thenReturn(
-        Optional.ofNullable(user));
-  }
 
   // 경기 조회
   private void getGame(Long gameId, GameEntity expectedCreatedGame) {
