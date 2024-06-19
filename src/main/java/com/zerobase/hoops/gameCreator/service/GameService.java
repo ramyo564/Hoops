@@ -25,11 +25,14 @@ import com.zerobase.hoops.entity.InviteEntity;
 import com.zerobase.hoops.entity.ParticipantGameEntity;
 import com.zerobase.hoops.entity.UserEntity;
 import com.zerobase.hoops.exception.CustomException;
-import com.zerobase.hoops.gameCreator.dto.GameDto.CreateRequest;
-import com.zerobase.hoops.gameCreator.dto.GameDto.DeleteRequest;
-import com.zerobase.hoops.gameCreator.dto.GameDto.DetailResponse;
-import com.zerobase.hoops.gameCreator.dto.GameDto.ParticipantUser;
-import com.zerobase.hoops.gameCreator.dto.GameDto.UpdateRequest;
+import com.zerobase.hoops.gameCreator.dto.CommonGameDto;
+import com.zerobase.hoops.gameCreator.dto.CommonGameDto.Response;
+import com.zerobase.hoops.gameCreator.dto.CreateGameDto;
+import com.zerobase.hoops.gameCreator.dto.CreateGameDto.Request;
+import com.zerobase.hoops.gameCreator.dto.DeleteGameDto;
+import com.zerobase.hoops.gameCreator.dto.DetailGameDto;
+import com.zerobase.hoops.gameCreator.dto.DetailGameDto.ParticipantUser;
+import com.zerobase.hoops.gameCreator.dto.UpdateGameDto;
 import com.zerobase.hoops.gameCreator.repository.GameRepository;
 import com.zerobase.hoops.gameCreator.repository.ParticipantGameRepository;
 import com.zerobase.hoops.gameCreator.type.Gender;
@@ -63,17 +66,18 @@ public class GameService {
   /**
    * 경기 생성 전 validation
    */
-  public String validCreateGame(CreateRequest request, UserEntity user) {
+  public CommonGameDto.Response validCreateGame(
+      CreateGameDto.Request request, UserEntity user) {
     log.info("loginId = {} validCreateGame start", user.getLoginId());
 
-    String message = "";
+    Response response = null;
 
     try {
       validCreateAndUpdateGame(request.getHeadCount(),
           request.getStartDateTime(), request.getAddress(),
           request.getMatchFormat(), null);
 
-      message = createGame(request, user);
+      response = createGame(request, user);
 
     } catch (CustomException e) {
       log.warn("loginId = {} validCreateGame CustomException message = {}",
@@ -87,22 +91,22 @@ public class GameService {
 
     log.info("loginId = {} validCreateGame end", user.getLoginId());
 
-    return message;
+    return response;
   }
 
   /**
    * 경기 생성
    */
-  private String createGame(CreateRequest request, UserEntity user) {
+  private CommonGameDto.Response createGame(Request request, UserEntity user) {
     // 경기 생성
-    GameEntity game = CreateRequest.toEntity(request, user);
+    GameEntity game = new CreateGameDto.Request().toEntity(request, user);
 
     gameRepository.save(game);
     log.info("loginId = {} game created", user.getLoginId());
 
     // 경기 개설자는 경기에 참가인 상태로 있어야 함
     ParticipantGameEntity participantGame =
-        ParticipantGameEntity.toGameCreatorEntity(game, user, clock);
+        new ParticipantGameEntity().toGameCreatorEntity(game, user, clock);
     log.info("loginId = {} participantGame created ", user.getLoginId());
 
     participantGameRepository.save(participantGame);
@@ -113,32 +117,32 @@ public class GameService {
     chatRoomRepository.save(chatRoom);
     log.info("loginId = {} chatRoom created ", user.getLoginId());
 
-    return game.getTitle() + " 경기가 생성되었습니다.";
+    return new Response().toDto(game.getTitle() + " 경기가 생성되었습니다.");
   }
 
   /**
    * 경기 상세 조회 전 validation
    */
-  public DetailResponse validGetGameDetail(Long gameId) {
+  public DetailGameDto.Response validGetGameDetail(Long gameId) {
     log.info("validGetGameDetail start");
 
-    DetailResponse result = null;
+    DetailGameDto.Response response = null;
 
     try {
       GameEntity game = getGame(gameId);
-      result = getGameDetail(game);
+      response = getGameDetail(game);
     } catch (Exception e) {
       log.error("validGetGameDetail Exception message = {}", e.getMessage(), e);
       throw e;
     }
     log.info("validGetGameDetail end");
-    return result;
+    return response;
   }
 
   /**
    * 경기 상세 조회
    */
-  private DetailResponse getGameDetail(GameEntity game) {
+  private DetailGameDto.Response getGameDetail(GameEntity game) {
     List<ParticipantGameEntity> participantGameEntityList =
         participantGameRepository
             .findByGameIdAndStatusAndDeletedDateTimeNull
@@ -148,15 +152,16 @@ public class GameService {
     List<ParticipantUser> participantUserList =
         participantGameEntityList.stream().map(ParticipantUser::toDto).toList();
 
-    return DetailResponse.toDto(game, participantUserList);
+    return new DetailGameDto.Response().toDto(game, participantUserList);
   }
 
   /**
    * 경기 수정 전 validation 체크
    */
-  public String validUpdateGame(UpdateRequest request, UserEntity user) {
+  public CommonGameDto.Response validUpdateGame(
+      UpdateGameDto.Request request, UserEntity user) {
     log.info("loginId = {} validUpdateGame start", user.getLoginId());
-    String message = "";
+    CommonGameDto.Response response = null;
 
     try {
       // 게임 아이디로 게임 조회, 먼저 삭제 되었는지 조회
@@ -207,7 +212,7 @@ public class GameService {
         }
       }
 
-      message = updateGame(request, game, user);
+      response = updateGame(request, game, user);
     } catch(CustomException e) {
       log.warn("loginId = {} validUpdateGame CustomException message = {}",
           user.getLoginId(), e.getMessage());
@@ -220,28 +225,28 @@ public class GameService {
 
     log.info("loginId = {} validUpdateGame end", user.getLoginId());
 
-    return message;
+    return response;
   }
 
   /**
    * 경기 수정
    */
-  private String updateGame(UpdateRequest request, GameEntity game,
-      UserEntity user) {
-    GameEntity updateGame = UpdateRequest.toEntity(request, game);
+  private CommonGameDto.Response updateGame(UpdateGameDto.Request request,
+      GameEntity game, UserEntity user) {
+    GameEntity updateGame = new UpdateGameDto.Request().toEntity(request, game);
     gameRepository.save(updateGame);
     log.info("loginId = {} game updated ", user.getLoginId());
 
-    return updateGame.getTitle() + " 경기가 수정되었습니다.";
+    return new Response().toDto(updateGame.getTitle() + " 경기가 수정되었습니다.");
   }
 
   /**
    * 경기 삭제 전 validation 체크
    */
-  public String validDeleteGame(DeleteRequest request, UserEntity user) {
+  public CommonGameDto.Response validDeleteGame(DeleteGameDto.Request request, UserEntity user) {
     log.info("loginId = {} validDeleteGame start", user.getLoginId());
 
-    String message = "";
+    CommonGameDto.Response response = null;
 
     try {
 
@@ -258,9 +263,9 @@ public class GameService {
 
       // 경기 개최자가 삭제 시 -> 경기 삭제
       if(Objects.equals(user.getId(), game.getUser().getId())) {
-        message = deleteGame(game, user);
+        response = deleteGame(game, user);
       } else { // 팀원이 삭제 시 -> 팀원 탈퇴
-        message = withdrewGame(game, user);
+        response = withdrewGame(game, user);
       }
 
     } catch(CustomException e) {
@@ -275,13 +280,13 @@ public class GameService {
 
     log.info("loginId = {} validDeleteGame end", user.getLoginId());
 
-    return message;
+    return response;
   }
 
   /**
    * 경기 삭제
    */
-  private String deleteGame(GameEntity game, UserEntity user) {
+  private CommonGameDto.Response deleteGame(GameEntity game, UserEntity user) {
 
     // 경기 삭제 전에 기존에 경기에 ACCEPT, APPLY 멤버들 조회
     List<ParticipantGameEntity> participantGameEntityList =
@@ -290,7 +295,7 @@ public class GameService {
 
     participantGameEntityList.forEach(participantGame -> {
       ParticipantGameEntity entity =
-          ParticipantGameEntity.setDelete(participantGame, clock);
+          new ParticipantGameEntity().setDelete(participantGame, clock);
       participantGameRepository.save(entity);
     });
     log.info("loginId = {} participantGame deleted ", user.getLoginId());
@@ -307,29 +312,29 @@ public class GameService {
     log.info("loginId = {} invite deleted ", user.getLoginId());
 
     // 경기 삭제
-    GameEntity gameEntity = DeleteRequest.toEntity(game, clock);
+    GameEntity gameEntity = new DeleteGameDto.Request().toEntity(game, clock);
     gameRepository.save(gameEntity);
     log.info("loginId = {} game deleted ", user.getLoginId());
 
-    return game.getTitle() + " 경기가 삭제되었습니다.";
+    return new Response().toDto(game.getTitle() + " 경기가 삭제되었습니다.");
   }
 
   /**
    * 경기 팀원 탈퇴
    */
-  private String withdrewGame(GameEntity game, UserEntity user) {
+  private CommonGameDto.Response withdrewGame(GameEntity game, UserEntity user) {
 
     ParticipantGameEntity participantGameEntity =
         participantGameRepository.findByStatusAndGameIdAndUserId
             (ACCEPT, game.getId(), user.getId())
             .orElseThrow(() -> new CustomException(NOT_PARTICIPANT_FOUND));
 
-    ParticipantGameEntity result =
-        ParticipantGameEntity.setWithdraw(participantGameEntity, clock);
+    ParticipantGameEntity result
+        = new ParticipantGameEntity().setWithdraw(participantGameEntity, clock);
 
     participantGameRepository.save(result);
 
-    return game.getTitle() + " 경기에 탈퇴했습니다.";
+    return new Response().toDto(game.getTitle() + " 경기에 탈퇴했습니다.");
   }
 
   /**
