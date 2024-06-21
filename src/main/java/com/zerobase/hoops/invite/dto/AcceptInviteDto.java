@@ -1,28 +1,35 @@
-package com.zerobase.hoops.friends.dto;
+package com.zerobase.hoops.invite.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-public class CommonFriendDto {
+public class AcceptInviteDto {
 
   @Getter
+  @Setter
   @ToString
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
   public static class Request {
 
-    @NotNull(message = "친구 아이디는 필수 값입니다.")
+    @Schema(
+        description = "초대 pk",
+        defaultValue = "1",
+        requiredMode = RequiredMode.REQUIRED)
+    @NotNull(message = "초대 아이디는 필수 값 입니다.")
     @Min(1)
-    private Long friendId;
+    private Long inviteId;
 
   }
-
 
   @Getter
   @ToString
@@ -30,10 +37,11 @@ public class CommonFriendDto {
   @AllArgsConstructor
   @Builder
   public static class Response {
+
     String message;
 
-    public CommonFriendDto.Response toDto(String message) {
-      return CommonFriendDto.Response.builder()
+    public Response toDto(String message) {
+      return Response.builder()
           .message(message)
           .build();
     }
