@@ -3,7 +3,7 @@ name: Backend Build and Push
 on:
   push:
     branches:
-      - yohan-main
+      - main
 
 jobs:
   build-and-push:
