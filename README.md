@@ -11,7 +11,7 @@
   - **팀 구성:** 프론트엔드 3명, 백엔드 4명
   - **개발 기간:** 2024.04 \~ 2024.08
   - **👉 원본 팀 프로젝트 리포지토리:** [https://github.com/hoops-project](https://github.com/hoops-project)
-  - **👉 서비스 시연 영상:** [https://player.vimeo.com/video/972786007?h=cc66d8cf59](https://player.vimeo.com/video/972786007?h=cc66d8cf59)
+  - **👉 서비스 시연 영상:** [🎥https://player.vimeo.com/video/972786007?h=cc66d8cf59](https://player.vimeo.com/video/972786007?h=cc66d8cf59)
 
 <br>  
 
@@ -176,6 +176,7 @@ graph LR
 |--------------------------|-----------------------------------------------|
 |<img width="450px" src="https://github.com/hoops-project/frontend/assets/138990007/27644677-eb89-4094-8f78-84d8ea8b6a92"/>|<img width="450px" src="https://github.com/hoops-project/frontend/assets/138990007/96a1aa94-ae89-4ab0-b08f-bb8214880360"/>|
 |🔅 경기에 친구를 초대하고 수락할 수 있어요 🔅|🔅 참가하고 싶은 경기에 신청을 하고 수락할 수 있어요 🔅|
+
 |  🏀 친구 검색 및 친구신청 🏀      |  🏀 채팅 🏀                                         |
 |--------------------------|-----------------------------------------------|
 |<img width="450px" src="https://github.com/hoops-project/frontend/assets/138990007/944122a7-917a-42bb-a3a9-76b6244489b1"/>|<img width="450px" src="https://github.com/hoops-project/frontend/assets/138990007/294cecb7-8f8e-455d-aa45-8799b625ac9f"/>|
@@ -204,6 +205,7 @@ graph LR
 |--------------------------|-----------------------------------------------|
 |<img width="450px" src="https://github.com/SamCoMo/DBZ-Front-End/assets/138990007/77702b10-9e95-4d81-85e8-3c13f4c0e2af"/>|<img width="450px" src="https://github.com/SamCoMo/DBZ-Front-End/assets/138990007/3f2e80a6-d1e9-4050-81d5-293bb89ab5ec"/>|
 |🔅 회원가입 후 이메일 인증을 통해 더 안전하게 사용할 수 있어요 🔅|🔅 카카오톡 로그인을 하여 더욱 간단하게 로그인이 가능해요 🔅|
+
 |  🏀 매너 점수 평가 🏀      |  🏀 블랙리스트 🏀                                         |
 |--------------------------|-----------------------------------------------|
 |<img width="450px" src="https://github.com/hoops-project/frontend/assets/138990007/e9c38a8d-5ec7-4828-9c2d-3455179a7f4d"/>|<img width="450px" src="https://github.com/hoops-project/frontend/assets/138990007/5d0956b6-0d1d-4765-bff1-4980b1685734"/>|
@@ -243,18 +245,18 @@ graph LR
 hoops
  ┣ alarm
  ┣ chat 👈
- ┣ commonResponse 👈 <- 다시체크
+ ┣ commonResponse 👈 
  ┣ config
  ┃ ┣ AsyncConfig.java
- ┃ ┣ JpaAuditingConfiguration.java  👈 <- 다시체크
- ┃ ┣ JwtParserConfig.java 👈 <- 다시체크
+ ┃ ┣ JpaAuditingConfiguration.java  👈 
+ ┃ ┣ JwtParserConfig.java 👈 
  ┃ ┣ QueryDslConfig.java
  ┃ ┣ RedisConfig.java
  ┃ ┣ SwaggerConfig.java
  ┃ ┣ TimeConfig.java
- ┃ ┣ WebSecurityConfig.java 👈 <- 다시체크
- ┃ ┣ WebSocketConnectionConfig.java 👈 <- 다시체크
- ┃ ┗ WebSocketConnectionEventListener.java 👈 <- 다시체크
+ ┃ ┣ WebSecurityConfig.java 👈
+ ┃ ┣ WebSocketConnectionConfig.java 👈
+ ┃ ┗ WebSocketConnectionEventListener.java 👈
  ┣ entity
  ┃ ┣ BlackListUserEntity.java 👈
  ┃ ┣ ChatRoomEntity.java 👈
