@@ -697,18 +697,32 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 ## 🚀 기술 스택 (Tech Stack)
 
 ### Backend
-- **Language**: Java 17
-- **Framework**: Spring Boot 3.1.11
-- **Libraries**: Spring Web, Spring Data JPA, Spring Security, WebSocket, SSE
-- **Authentication**: JWT, OAuth2
+- Gradle - 8.7
+- JDK - 17
+- Spring Boot - 3.1.11
+    - Spring Security
+    - JPA
+    - WebSocker
+    - Server-Sent-Events
+    - Redis
+- JWT - 0.11.2
+- Spring Dependency Management - 1.1.4
+- Lombok - 1.18.32
+- Swagger (SpringDoc OpenAPI) - 2.1.0
+- QueryDSL - 5.0.0
+- SockJS Client:- 1.5.1
+- STOMP WebSocket - 2.3.4
+- JSON - 20231013
 
 ### Database & Cache
 - **RDBMS**: MariaDB
 - **In-memory**: Redis
 
 ### DevOps & Cloud
-- **Virtualization**: Docker, Docker Compose
-- **CI/CD**: GitHub Actions
+- **Virtualization**:
+  - Docker 25.05
+  - Docker Compose 2.29.1
+- **CI/CD**: GitHub Actions V3
 - **Cloud**: AWS (EC2, RDS, Route53)
 
 ### Tools & Testing
