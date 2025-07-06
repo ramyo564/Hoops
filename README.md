@@ -4,11 +4,11 @@
 
 ## 📂 목차
 
-- [1. 프로젝트 소개](https://github.com/ramyo564/Hoops/edit/main/README.md#-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C)
-- [2. 아키텍처](https://github.com/ramyo564/Hoops/edit/main/README.md#%EF%B8%8F-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98)
-- [3. 주요기능](https://github.com/ramyo564/Hoops/edit/main/README.md#-%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5)
-- [4. 기여한 부분](https://github.com/ramyo564/Hoops/edit/main/README.md#-%EC%A0%9C%EA%B0%80-%EA%B8%B0%EC%97%AC%ED%95%9C-%EB%B6%80%EB%B6%84-my-contribution)
-- [5. 기술스택](https://github.com/ramyo564/Hoops/edit/main/README.md#-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D-tech-stack)
+- [1. 프로젝트 소개](https://github.com/ramyo564/Hoops?tab=readme-ov-file#-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C)
+- [2. 아키텍처](https://github.com/ramyo564/Hoops?tab=readme-ov-file#%EF%B8%8F-%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98)
+- [3. 주요기능](https://github.com/ramyo564/Hoops?tab=readme-ov-file#-%EC%A3%BC%EC%9A%94-%EA%B8%B0%EB%8A%A5)
+- [4. 기여한 부분](https://github.com/ramyo564/Hoops?tab=readme-ov-file#-%EC%A0%9C%EA%B0%80-%EA%B8%B0%EC%97%AC%ED%95%9C-%EB%B6%80%EB%B6%84-my-contribution)
+- [5. 기술스택](https://github.com/ramyo564/Hoops?tab=readme-ov-file#-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D-tech-stack)
 
 
 ## 📌 프로젝트 소개
@@ -285,7 +285,7 @@ hoops
 
 <br>
 
-### 1. 실시간 채팅 기능 개발 (WebSocket, STOMP)
+### 📌 1. 실시간 채팅 기능 개발 (WebSocket, STOMP)
 
 > 경기에 참여한 팀원들 간의 실시간 소통과 커뮤니티 활성화를 위해 웹소켓 기반의 채팅 기능을 개발했습니다.
 
@@ -342,7 +342,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 ---
 
 
-### 2. 동적 검색 및 필터링 기능 구현 (Specification, API 설계)
+### 📌 2. 동적 검색 및 필터링 기능 구현 (Specification, API 설계)
 
 > 사용자가 원하는 경기를 날짜, 경기 형식, 지역 등 다양한 조건으로 손쉽게 찾을 수 있도록 유연하고 확장 가능한 검색 API를 설계하고 구현했습니다.
 
@@ -396,7 +396,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 ---
 
-### 3. Spring Security 기반의 API 보안 시스템 구축
+### 📌 3. Spring Security 기반의 API 보안 시스템 구축
 
 > 안전하고 신뢰할 수 있는 서비스 환경을 제공하기 위해, Spring Security를 기반으로 **외부의 비인가 접근을 차단(CORS)** 하고 **내부의 악의적인 사용자를 제어(Blacklist)** 하는 다층적 보안 시스템을 설계하고 구현했습니다.
 
@@ -459,7 +459,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 ---
 
-### 4. 커뮤니티 자정 작용을 위한 사용자 평가 및 신고 시스템 구축
+### 📌 4. 커뮤니티 자정 작용을 위한 사용자 평가 및 신고 시스템 구축
 > 클린한 농구 커뮤니티를 조성하기 위해, 긍정적 행동을 장려하는 **매너 포인트 시스템(Proactive)** 과 부정적 행동을 제재하는 **신고 시스템(Reactive)** 을 유기적으로 연동하여 구현했습니다.
 
 <br>
@@ -527,7 +527,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 ---
 
-### 5. 재사용 가능한 인증 컴포넌트 설계 및 WebSocket 보안 적용
+### 📌 5. 재사용 가능한 인증 컴포넌트 설계 및 WebSocket 보안 적용
 
 일관성 있고 테스트가 용이한 인증 로직을 위해 **재사용 가능한 인증 컴포넌트(`JwtTokenExtract`)** 를 설계했습니다.   
 이 설계 결정은 프로젝트 막바지에 발견된 **치명적인 WebSocket 보안 허점** 을 신속하게 해결하는 결정적인 포인트가 되었습니다.
@@ -590,7 +590,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 ---
 
-### 6. DevOps: CI/CD 파이프라인 구축 및 인프라 비용 최적화
+### 📌 6. DevOps: CI/CD 파이프라인 구축 및 인프라 비용 최적화
 
 프로젝트의 안정성과 개발 생산성을 높이기 위해, 수동 배포 환경을 자동화하고 AWS 인프라 비용을 최적화하는 CI/CD 파이프라인을 구축했습니다.
 
