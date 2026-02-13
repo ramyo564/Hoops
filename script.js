@@ -1,6 +1,7 @@
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+import { templateConfig } from './config.js';
 
-mermaid.initialize({
+const baseMermaidConfig = {
     startOnLoad: false,
     theme: 'dark',
     securityLevel: 'loose',
@@ -10,759 +11,557 @@ mermaid.initialize({
         htmlLabels: true,
         curve: 'linear'
     }
-});
+};
 
-document.addEventListener('DOMContentLoaded', async () => {
+const mermaidConfig = {
+    ...baseMermaidConfig,
+    ...(templateConfig.mermaid ?? {}),
+    flowchart: {
+        ...baseMermaidConfig.flowchart,
+        ...(templateConfig.mermaid?.flowchart ?? {})
+    }
+};
+
+mermaid.initialize(mermaidConfig);
+
+function byId(id) {
+    return document.getElementById(id);
+}
+
+function normalizeHashTarget(target) {
+    if (!target) {
+        return '#';
+    }
+    return target.startsWith('#') ? target : `#${target}`;
+}
+
+function toSafeLabel(value) {
+    return String(value ?? 'unknown').replace(/[^a-zA-Z0-9_-]+/g, ' ').trim() || 'unknown';
+}
+
+function setText(id, value) {
+    const el = byId(id);
+    if (el && value) {
+        el.textContent = value;
+    }
+}
+
+function setupUptime() {
+    const uptimeElement = byId('uptime');
+    if (!uptimeElement) {
+        return;
+    }
+
     const startTime = new Date();
-    const uptimeElement = document.getElementById('uptime');
-
-    function updateUptime() {
-        if (!uptimeElement) {
-            return;
-        }
-
+    const updateUptime = () => {
         const now = new Date();
         const diff = Math.floor((now - startTime) / 1000);
-
         const h = Math.floor(diff / 3600).toString().padStart(2, '0');
         const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
         const s = (diff % 60).toString().padStart(2, '0');
-
         uptimeElement.textContent = `${h}:${m}:${s}`;
-    }
+    };
 
-    setInterval(updateUptime, 1000);
     updateUptime();
+    setInterval(updateUptime, 1000);
+}
 
-    function setupMobileNav() {
-        const nav = document.getElementById('header-nav');
-        const toggle = document.querySelector('.nav-toggle');
-
-        if (!nav || !toggle) {
-            return;
-        }
-
-        const closeNav = () => {
-            nav.classList.remove('is-open');
-            toggle.classList.remove('is-open');
-            toggle.setAttribute('aria-expanded', 'false');
-        };
-
-        const openNav = () => {
-            nav.classList.add('is-open');
-            toggle.classList.add('is-open');
-            toggle.setAttribute('aria-expanded', 'true');
-        };
-
-        toggle.addEventListener('click', (event) => {
-            event.stopPropagation();
-            if (nav.classList.contains('is-open')) {
-                closeNav();
-            } else {
-                openNav();
-            }
-        });
-
-        nav.querySelectorAll('.nav-item').forEach((item) => {
-            item.addEventListener('click', closeNav);
-        });
-
-        document.addEventListener('click', (event) => {
-            const target = event.target;
-            if (!(target instanceof Node)) {
-                return;
-            }
-
-            if (!nav.contains(target) && !toggle.contains(target)) {
-                closeNav();
-            }
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                closeNav();
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                closeNav();
-            }
-        });
+function setupMobileNav() {
+    const nav = byId('header-nav');
+    const toggle = document.querySelector('.nav-toggle');
+    if (!nav || !toggle) {
+        return;
     }
 
-    const diagrams = {
-        "hoops-system-overview": `
-            %%{init: {'flowchart': {'nodeSpacing': 26, 'rankSpacing': 28}}}%%
-            graph LR
-            subgraph Client [Client Layer]
-                U[Client User]
-            end
-
-            subgraph Frontend [Frontend Layer]
-                Vercel[Vercel Hosting]
-                FEStack[React and TypeScript and Recoil and MUI]
-                Axios[Axios REST calls]
-                Stomp[WebSocket STOMP calls]
-            end
-
-            subgraph AWS [AWS Layer]
-                subgraph AwsNetwork [Routing and TLS]
-                    R53[Amazon Route53]
-                    ELB[Amazon ELB]
-                    ACM[AWS Certificate Manager]
-                end
-
-                subgraph AwsCompute [Compute and Runtime]
-                    EC2[Amazon EC2]
-                    subgraph Containers [Docker Container Runtime]
-                        Spring[Spring Boot Container]
-                        Redis[(Redis Container)]
-                        Logs[(Docker Volume logs)]
-                    end
-                end
-
-                subgraph AwsData [Managed Data Services]
-                    RDS[(Amazon RDS MariaDB)]
-                end
-            end
-
-            subgraph Delivery [CI and CD]
-                GH[GitHub Repository]
-                GHA[GitHub Actions]
-                Hub[(Docker Hub)]
-                Deploy[Self hosted runner on EC2]
-                VDeploy[Vercel deployment]
-            end
-
-            U --> Vercel
-            Vercel --> FEStack
-            FEStack --> Axios
-            FEStack --> Stomp
-            Axios --> R53
-            R53 --> Axios
-            Stomp --> R53
-            R53 --> Stomp
-
-            R53 --> ELB
-            ELB --> R53
-            ACM --> ELB
-            ELB --> ACM
-            ELB --> EC2
-            EC2 --> ELB
-
-            EC2 --> Spring
-            EC2 --> Redis
-            Spring --> RDS
-            RDS --> Spring
-            Spring --> Redis
-            Redis --> Spring
-            Spring --> Logs
-
-            GH --> GHA
-            GHA --> Hub
-            Hub --> Deploy
-            Deploy --> EC2
-            GH --> VDeploy
-            VDeploy --> Vercel
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class U,Vercel,FEStack,Axios,Stomp b
-            class R53,ELB,ACM,EC2,GH,GHA,Deploy,VDeploy o
-            class Spring,Redis,Logs,RDS,Hub g
-        `,
-
-        architecture: `
-            graph LR
-            subgraph Client [Users]
-                Web[Web Client]
-                Mobile[Mobile Web]
-            end
-
-            subgraph Edge [API Edge]
-                API[Spring Boot Backend]
-                Sec[Spring Security]
-            end
-
-            subgraph Domain [Domain Services]
-                Users[Users and Auth]
-                Game[Game and Participants]
-                Social[Friends and Invite]
-                Chat[Chat and WebSocket]
-                Gov[Reports and Manager]
-                Alarm[Notifications SSE]
-            end
-
-            subgraph Data [Persistence]
-                DB[(MariaDB)]
-                Redis[(Redis)]
-            end
-
-            Web --> API
-            Mobile --> API
-            API --> Sec
-
-            Sec --> Users
-            API --> Game
-            API --> Social
-            API --> Gov
-            API --> Chat
-            API --> Alarm
-
-            Users --> DB
-            Game --> DB
-            Social --> DB
-            Gov --> DB
-            Chat --> DB
-
-            Users --> Redis
-            Alarm --> Redis
-            Chat --> Redis
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Web,Mobile,API,Sec b
-            class Users,Game,Social,Chat,Gov,Alarm o
-            class DB,Redis g
-        `,
-
-        'hoops-domain-map': `
-            graph TB
-            Root[com.zerobase.hoops] --> Users[users]
-            Root --> GameCreator[gameCreator]
-            Root --> GameUsers[gameUsers]
-            Root --> Friends[friends]
-            Root --> Invite[invite]
-            Root --> Chat[chat]
-            Root --> Alarm[alarm]
-            Root --> Reports[reports]
-            Root --> Manager[manager]
-            Root --> Common[commonResponse and config and security]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Root b
-            class Users,GameCreator,GameUsers,Friends,Invite,Chat,Alarm,Reports,Manager o
-            class Common g
-        `,
-
-        'hoops-game-flow': `
-            graph TB
-            Creator[Game host] --> GC[GameController]
-            GC --> GS[GameService]
-            GS --> GR[GameRepository]
-            GR --> DB[(MariaDB)]
-
-            Player[Game user] --> GUC[GameUserController]
-            GUC --> GUS[GameUserService]
-            GUS --> Spec[Specification filters]
-            Spec --> GR
-
-            Host[Participant owner] --> PGC[ParticipantGameController]
-            PGC --> PGS[ParticipantGameService]
-            PGS --> PGR[ParticipantGameRepository]
-            PGR --> DB
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Creator,Player,Host,GC,GUC,PGC b
-            class GS,GUS,PGS,Spec o
-            class GR,PGR,DB g
-        `,
-
-        'hoops-social-flow': `
-            graph TB
-            User[Authenticated user] --> FC[FriendController]
-            FC --> FS[FriendService]
-            FS --> FR[FriendRepository]
-
-            User --> IC[InviteController]
-            IC --> IS[InviteService]
-            IS --> IR[InviteRepository]
-
-            IS --> PGS[ParticipantGameService]
-            PGS --> PGR[ParticipantGameRepository]
-            FR --> DB[(MariaDB)]
-            IR --> DB
-            PGR --> DB
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class User,FC,IC b
-            class FS,IS,PGS o
-            class FR,IR,PGR,DB g
-        `,
-
-        'hoops-governance-flow': `
-            graph TB
-            Match[Match complete] --> Manner[GameUserService manner score]
-            Manner --> MRepo[MannerPointRepository]
-            MRepo --> DB[(MariaDB)]
-
-            Reporter[User report] --> RC[ReportController]
-            RC --> RS[ReportService]
-            RS --> RRepo[ReportRepository]
-            RRepo --> DB
-
-            RS --> Notify[NotificationService]
-            Notify --> SSE[SSE to managers]
-
-            Manager[Manager action] --> MC[ManagerController]
-            MC --> MS[ManagerService]
-            MS --> BL[BlackListUserRepository]
-            BL --> DB
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Match,Reporter,Manager,RC,MC b
-            class Manner,RS,Notify,MS o
-            class MRepo,RRepo,BL,DB,SSE g
-        `,
-
-        'hoops-chat-realtime': `
-            graph TB
-            Client[STOMP client] --> Conn[WebSocket connect]
-            Conn --> Interceptor[ChannelInterceptor]
-            Interceptor --> Auth[Token validation]
-
-            Client --> ChatC[ChatController]
-            ChatC --> ChatS[ChatService]
-            ChatS --> RoomRepo[ChatRoomRepository]
-            ChatS --> MsgRepo[MessageRepository]
-            ChatS --> Sender[MessageSender]
-
-            Sender --> Topic[Topic room broadcast]
-            Sender --> Queue[Queue targeted history]
-            MsgRepo --> DB[(MariaDB)]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Client,Conn,ChatC b
-            class Interceptor,Auth,ChatS,Sender o
-            class RoomRepo,MsgRepo,Topic,Queue,DB g
-        `,
-
-        'hoops-notification-sse': `
-            graph LR
-            Event[Domain event report invite] --> NS[NotificationService]
-            NS --> NR[NotificationRepository]
-            NS --> ER[EmitterRepository]
-            NR --> DB[(MariaDB)]
-            ER --> Redis[(Redis)]
-            ER --> SSE[SSE stream]
-            SSE --> Manager[Online manager]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Event,NS,SSE,Manager b
-            class NR,ER o
-            class DB,Redis g
-        `,
-
-        'hoops-auth-security': `
-            graph TB
-            Login[POST auth login] --> AC[AuthController]
-            AC --> AS[AuthService]
-            AS --> TP[TokenProvider issue JWT]
-            AS --> AR[AuthRepository Redis]
-
-            OAuth[Kakao OAuth2] --> OC[OAuth2Controller]
-            OC --> OS[OAuth2Service]
-            OS --> TP
-
-            Request[API request] --> Filter[JwtAuthenticationFilter]
-            Filter --> Sec[SecurityContext]
-            Sec --> APIs[Protected APIs]
-
-            CORS[CORS whitelist] --> WebSec[WebSecurityConfig]
-            WebSec --> Filter
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Login,OAuth,Request,AC,OC,Filter b
-            class AS,OS,TP,Sec,APIs o
-            class AR,CORS,WebSec g
-        `,
-
-        'hoops-ws-security-fix': `
-            graph TB
-            Connect[STOMP CONNECT] --> Header[Read Authorization and gameId]
-            Header --> Extract[JwtTokenExtract getUserFromToken]
-            Extract --> Valid{Token valid}
-            Valid -- no --> Reject[Reject connection]
-            Valid -- yes --> Check[Participant membership check]
-            Check --> Allowed{Approved member}
-            Allowed -- no --> Block[Block websocket join]
-            Allowed -- yes --> Accept[Allow room subscription]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Connect,Header,Extract,Check b
-            class Valid,Allowed o
-            class Reject,Block,Accept g
-        `,
-
-        'hoops-chat-history-fix': `
-            graph LR
-            Before[Before] --> B1[Load history]
-            B1 --> B2[Publish to shared topic]
-            B2 --> B3[Existing users receive duplicate messages]
-
-            After[After] --> A1[Load history]
-            A1 --> A2[Send history to personal queue]
-            A2 --> A3[Only newcomer receives history]
-            A3 --> A4[New realtime messages still use shared topic]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Before,B1,B2,After,A1,A2 b
-            class B3,A3 o
-            class A4 g
-        `,
-
-        'hoops-dynamic-search-spec': `
-            graph TB
-            Req[GET api games with query params] --> Build[Build Specification predicates]
-            Build --> Repo[GameRepository findAll]
-            Repo --> DB[(MariaDB)]
-            Repo --> Page[Page result]
-            Page --> DTO[Game search response DTO]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Req,Build,Repo b
-            class Page,DTO o
-            class DB g
-        `,
-
-        'hoops-common-dto-api': `
-            graph LR
-            View1[All games view] --> API[GET api games]
-            View2[Address search view] --> API
-            View3[Joined games view] --> API
-            API --> Common[PageGameSearchResponses]
-            Common --> FE[Frontend single rendering model]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class View1,View2,View3,API b
-            class Common o
-            class FE g
-        `,
-
-        'hoops-manner-concurrency': `
-            graph TB
-            U1[Evaluator A] --> Svc[GameUserService update manner]
-            U2[Evaluator B] --> Svc
-            U3[Evaluator C] --> Svc
-            Svc --> Lock[PESSIMISTIC_WRITE lock]
-            Lock --> Repo[MannerPointRepository]
-            Repo --> DB[(MariaDB)]
-            Repo --> Result[Consistent score update]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class U1,U2,U3,Svc b
-            class Lock,Repo o
-            class DB,Result g
-        `,
-
-        'hoops-jwt-component': `
-            graph TB
-            HTTP[HTTP controllers and services] --> Extract[JwtTokenExtract component]
-            WS[WebSocket interceptor] --> Extract
-            Extract --> Token[TokenProvider parse and validate]
-            Extract --> UserRepo[UserRepository]
-            Extract --> Principal[Unified authenticated user result]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class HTTP,WS,Extract b
-            class Token,UserRepo o
-            class Principal g
-        `,
-
-        'hoops-test-coverage': `
-            graph TB
-            Test[JUnit5 and Spring Boot Test] --> Ctrl[Controller tests]
-            Test --> Svc[Service tests]
-            Ctrl --> Domains[Game Invite Friend Report Manager User Chat]
-            Svc --> Domains
-            Domains --> Quality[Behavior regression guard]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Test,Ctrl,Svc b
-            class Domains o
-            class Quality g
-        `,
-
-        'hoops-docker-standardization': `
-            graph LR
-            Dev[Developer machine] --> Dockerfile[Dockerfile runtime spec]
-            Dockerfile --> Image[Backend image]
-            Image --> Local[Local docker compose]
-            Image --> Server[EC2 docker runtime]
-            Local --> Same[Same runtime behavior]
-            Server --> Same
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Dev,Dockerfile,Image b
-            class Local,Server o
-            class Same g
-        `,
-
-        'hoops-multi-stage-build': `
-            graph TB
-            Src[Source code] --> Build[Builder stage gradle build]
-            Build --> Jar[Application jar]
-            Jar --> Runtime[Runtime stage minimal image]
-            Runtime --> Size[Image reduced from 600MB to 250MB]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Src,Build,Jar b
-            class Runtime o
-            class Size g
-        `,
-
-        'hoops-github-actions-cicd': `
-            graph LR
-            Push[Push main] --> Workflow[GitHub Actions workflow]
-            Workflow --> Build[Build and test]
-            Build --> DockerHub[(Docker Hub)]
-            DockerHub --> Deploy[Deployment stage]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Push,Workflow,Build b
-            class DockerHub o
-            class Deploy g
-        `,
-
-        'hoops-self-hosted-deploy': `
-            graph TB
-            CI[GitHub Actions] --> Runner[Self hosted runner EC2]
-            Runner --> Login[Docker login]
-            Login --> Pull[docker compose pull]
-            Pull --> Up[docker compose up -d]
-            Up --> Prune[old image prune]
-            Up --> Service[Hoops backend online]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class CI,Runner,Login b
-            class Pull,Up,Prune o
-            class Service g
-        `,
-
-        'hoops-aws-cost-optimization': `
-            graph LR
-            Before[Before optimization] --> B1[ElastiCache + RDS public access]
-            B1 --> B2[High monthly cost]
-
-            After[After optimization] --> A1[Redis container on EC2]
-            A1 --> A2[RDS private VPC access]
-            A2 --> A3[Monthly cost reduced about 80 percent]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class Before,B1,After,A1 b
-            class B2,A2 o
-            class A3 g
-        `,
-
-        'hoops-rds-private-network': `
-            graph LR
-            Internet[Public internet] -. blocked .-> RDS[(RDS)]
-            EC2[EC2 app runtime] --> VPC[VPC private subnet]
-            VPC --> RDS
-            EC2 --> SG[Security groups]
-            SG --> RDS
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class EC2,VPC,SG b
-            class RDS o
-            class Internet g
-        `,
-
-        'hoops-redis-container-shift': `
-            graph TB
-            App[Hoops backend] --> RedisLocal[Redis container on EC2]
-            App -. previous .-> Elasticache[Managed ElastiCache]
-            RedisLocal --> Cost[Lower recurring cost]
-            RedisLocal --> Control[Direct runtime control]
-
-            classDef b fill:#161b22,stroke:#58a6ff,color:#c9d1d9
-            classDef o fill:#161b22,stroke:#d29922,color:#c9d1d9
-            classDef g fill:#161b22,stroke:#238636,color:#c9d1d9
-            class App,RedisLocal b
-            class Elasticache o
-            class Cost,Control g
-        `
+    const closeNav = () => {
+        nav.classList.remove('is-open');
+        toggle.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
     };
 
-    const HOOPS_REPO = 'https://github.com/ramyo564/Hoops/blob/main/README.md';
-
-    const learnMoreLinks = {
-        'hoops-domain-map': `${HOOPS_REPO}#lm-backend-architecture`,
-        'hoops-game-flow': `${HOOPS_REPO}#lm-contrib-game-flow`,
-        'hoops-social-flow': `${HOOPS_REPO}#lm-social-domain-flow`,
-        'hoops-governance-flow': `${HOOPS_REPO}#lm-contrib-governance`,
-        'hoops-chat-realtime': `${HOOPS_REPO}#lm-contrib-chat-realtime`,
-        'hoops-notification-sse': `${HOOPS_REPO}#lm-contrib-sse-notification`,
-        'hoops-auth-security': `${HOOPS_REPO}#lm-contrib-security`,
-        'hoops-ws-security-fix': `${HOOPS_REPO}#lm-contrib-ws-security`,
-        'hoops-chat-history-fix': `${HOOPS_REPO}#lm-contrib-chat-history-fix`,
-        'hoops-dynamic-search-spec': `${HOOPS_REPO}#lm-contrib-dynamic-search`,
-        'hoops-common-dto-api': `${HOOPS_REPO}#lm-contrib-common-dto`,
-        'hoops-manner-concurrency': `${HOOPS_REPO}#lm-contrib-manner-concurrency`,
-        'hoops-jwt-component': `${HOOPS_REPO}#lm-contrib-jwt-component`,
-        'hoops-test-coverage': `${HOOPS_REPO}#lm-tools-testing`,
-        'hoops-docker-standardization': `${HOOPS_REPO}#lm-devops-docker-standardization`,
-        'hoops-multi-stage-build': `${HOOPS_REPO}#lm-devops-multistage-build`,
-        'hoops-github-actions-cicd': `${HOOPS_REPO}#lm-devops-github-actions`,
-        'hoops-self-hosted-deploy': `${HOOPS_REPO}#lm-devops-self-hosted-deploy`,
-        'hoops-aws-cost-optimization': `${HOOPS_REPO}#lm-devops-aws-cost-optimization`,
-        'hoops-rds-private-network': `${HOOPS_REPO}#lm-devops-rds-private`,
-        'hoops-redis-container-shift': `${HOOPS_REPO}#lm-devops-redis-container-shift`
+    const openNav = () => {
+        nav.classList.add('is-open');
+        toggle.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
     };
 
-    function setupLearnMoreLinks() {
-        const cards = document.querySelectorAll('.service-card');
-        cards.forEach((card) => {
-            const mermaidId = card.querySelector('.mermaid')?.getAttribute('data-mermaid-id');
-            const link = card.querySelector('.card-link');
-            if (!mermaidId || !link) {
-                return;
-            }
-
-            const href = learnMoreLinks[mermaidId];
-            if (!href) {
-                link.setAttribute('href', '#');
-                return;
-            }
-
-            link.setAttribute('href', href);
-            link.setAttribute('target', '_blank');
-            link.setAttribute('rel', 'noopener noreferrer');
-        });
-    }
-
-    function setupMermaidModal() {
-        const modal = document.getElementById('mermaid-modal');
-        const modalContent = document.getElementById('mermaid-modal-content');
-        const modalTitle = document.getElementById('mermaid-modal-title');
-
-        if (!modal || !modalContent || !modalTitle) {
-            return;
-        }
-
-        const targets = document.querySelectorAll('.graph-container, .card-visual');
-
-        const closeModal = () => {
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
-            modalContent.replaceChildren();
-            document.body.classList.remove('modal-open');
-        };
-
-        const openModal = (target) => {
-            const sourceSvg = target.querySelector('.mermaid svg');
-            if (!sourceSvg) {
-                return;
-            }
-
-            const clonedSvg = sourceSvg.cloneNode(true);
-            const viewBox = sourceSvg.getAttribute('viewBox');
-            if (viewBox) {
-                const parts = viewBox.trim().split(/\s+/).map(Number);
-                if (parts.length === 4 && parts.every(Number.isFinite)) {
-                    const zoomFactor = 1.35;
-                    clonedSvg.setAttribute('width', String(Math.round(parts[2] * zoomFactor)));
-                    clonedSvg.setAttribute('height', String(Math.round(parts[3] * zoomFactor)));
-                }
-            } else {
-                const rect = sourceSvg.getBoundingClientRect();
-                clonedSvg.setAttribute('width', String(Math.round(rect.width * 1.35)));
-                clonedSvg.setAttribute('height', String(Math.round(rect.height * 1.35)));
-            }
-
-            modalContent.replaceChildren(clonedSvg);
-
-            const titleText =
-                target.closest('.service-card')?.querySelector('.card-title')?.textContent?.trim() ||
-                target.closest('.hero-panel')?.querySelector('.panel-title')?.textContent?.trim() ||
-                'Mermaid Diagram';
-            modalTitle.textContent = titleText;
-
-            modal.classList.add('is-open');
-            modal.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('modal-open');
-        };
-
-        targets.forEach((target) => {
-            target.classList.add('mermaid-zoom-target');
-            target.setAttribute('tabindex', '0');
-            target.setAttribute('role', 'button');
-            target.setAttribute('aria-label', 'Open expanded Mermaid diagram');
-
-            target.addEventListener('click', () => openModal(target));
-            target.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    openModal(target);
-                }
-            });
-        });
-
-        modal.querySelectorAll('[data-mermaid-close]').forEach((closeButton) => {
-            closeButton.addEventListener('click', closeModal);
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && modal.classList.contains('is-open')) {
-                closeModal();
-            }
-        });
-    }
-
-    const mermaidContainers = document.querySelectorAll('.mermaid');
-    mermaidContainers.forEach((container) => {
-        const id = container.getAttribute('data-mermaid-id');
-        if (id && diagrams[id]) {
-            container.innerHTML = diagrams[id];
+    toggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (nav.classList.contains('is-open')) {
+            closeNav();
+        } else {
+            openNav();
         }
     });
 
-    await mermaid.run({ nodes: mermaidContainers });
+    nav.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.classList.contains('nav-item')) {
+            closeNav();
+        }
+    });
 
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Node)) {
+            return;
+        }
+        if (!nav.contains(target) && !toggle.contains(target)) {
+            closeNav();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeNav();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            closeNav();
+        }
+    });
+}
+
+function setSystemInfo() {
+    if (templateConfig.system?.documentTitle) {
+        document.title = templateConfig.system.documentTitle;
+    }
+    setText('system-name', templateConfig.system?.systemName);
+}
+
+function renderHero() {
+    const hero = templateConfig.hero ?? {};
+    const section = byId('system-architecture');
+    const metrics = byId('hero-metrics');
+    const mermaidContainer = byId('hero-mermaid');
+
+    if (section && hero.sectionId) {
+        section.id = hero.sectionId;
+    }
+    setText('hero-panel-title', hero.panelTitle);
+    setText('hero-panel-uid', hero.panelUid);
+
+    if (mermaidContainer && hero.diagramId) {
+        mermaidContainer.setAttribute('data-mermaid-id', hero.diagramId);
+    }
+
+    if (!metrics) {
+        return;
+    }
+    metrics.replaceChildren();
+    renderMetricLines(metrics, hero.metrics, '> Add metrics in templateConfig.hero.metrics');
+}
+
+function renderMetricLines(container, lines, fallbackText) {
+    const metricLines = Array.isArray(lines) ? lines : [];
+    if (metricLines.length === 0) {
+        const fallback = document.createElement('p');
+        fallback.textContent = fallbackText;
+        container.appendChild(fallback);
+        return;
+    }
+
+    metricLines.forEach((line) => {
+        const item = document.createElement('p');
+        const cleanLine = String(line).replace(/^>\s*/, '');
+        item.textContent = `> ${cleanLine}`;
+        container.appendChild(item);
+    });
+}
+
+function createTopPanel(panel, index) {
+    const section = document.createElement('section');
+    section.className = `panel hero-panel ${panel.panelClass ?? ''}`.trim();
+    section.id = panel.sectionId || `top-panel-${index + 1}`;
+
+    const header = document.createElement('div');
+    header.className = 'panel-header';
+
+    const title = document.createElement('span');
+    title.className = 'panel-title';
+    title.textContent = panel.panelTitle || `TOP_PANEL_${index + 1}`;
+
+    const uid = document.createElement('span');
+    uid.className = 'panel-uid';
+    uid.textContent = panel.panelUid || `ID: TOP-${String(index + 1).padStart(2, '0')}`;
+
+    header.append(title, uid);
+
+    const graphContainer = document.createElement('div');
+    graphContainer.className = 'graph-container';
+    const mermaidContainer = document.createElement('div');
+    mermaidContainer.className = 'mermaid';
+    mermaidContainer.setAttribute('data-mermaid-id', panel.diagramId || '');
+    graphContainer.appendChild(mermaidContainer);
+
+    const metrics = document.createElement('div');
+    metrics.className = 'hero-message';
+    renderMetricLines(metrics, panel.metrics, '> Add metrics in templateConfig.topPanels');
+
+    section.append(header, graphContainer, metrics);
+    return section;
+}
+
+function renderTopPanels() {
+    const container = byId('top-panels');
+    if (!container) {
+        return;
+    }
+    container.replaceChildren();
+
+    const panels = Array.isArray(templateConfig.topPanels) ? templateConfig.topPanels : [];
+    panels.forEach((panel, index) => {
+        container.appendChild(createTopPanel(panel, index));
+    });
+}
+
+function renderSkills() {
+    const skillsConfig = templateConfig.skills ?? {};
+    const section = byId('skill-set');
+    const grid = byId('skill-grid');
+    if (!grid) {
+        return;
+    }
+
+    if (section && skillsConfig.sectionId) {
+        section.id = skillsConfig.sectionId;
+    }
+    setText('skills-panel-title', skillsConfig.panelTitle);
+    setText('skills-panel-uid', skillsConfig.panelUid);
+
+    grid.replaceChildren();
+    const items = Array.isArray(skillsConfig.items) ? skillsConfig.items : [];
+
+    items.forEach((item) => {
+        const card = document.createElement('article');
+        card.className = 'skill-card';
+
+        const title = document.createElement('h3');
+        title.className = 'skill-card-title';
+        title.textContent = item.title ?? 'CATEGORY';
+
+        const stack = document.createElement('p');
+        stack.className = 'skill-card-stack';
+        stack.textContent = item.stack ?? '';
+
+        card.append(title, stack);
+        grid.appendChild(card);
+    });
+}
+
+function createGroupDivider(group, sectionTheme) {
+    const divider = document.createElement('div');
+    divider.className = 'group-divider';
+    divider.setAttribute('data-theme', sectionTheme || 'blue');
+
+    const title = document.createElement('span');
+    title.className = 'group-title';
+    title.textContent = group.title ?? '';
+
+    const desc = document.createElement('span');
+    desc.className = 'group-desc';
+    desc.textContent = group.desc ?? '';
+
+    divider.append(title, desc);
+    return divider;
+}
+
+function createServiceCard(card, sectionConfig) {
+    const article = document.createElement('article');
+    article.className = `service-card ${sectionConfig.cardClass ?? ''} ${card.cardClass ?? ''}`.trim();
+
+    const visual = document.createElement('div');
+    visual.className = 'card-visual';
+    const visualHeight = card.visualHeight || sectionConfig.cardVisualHeight;
+    if (visualHeight) {
+        visual.style.setProperty('--card-visual-height', visualHeight);
+    }
+
+    const mermaidContainer = document.createElement('div');
+    mermaidContainer.className = 'mermaid';
+    mermaidContainer.setAttribute('data-mermaid-id', card.mermaidId ?? '');
+    visual.appendChild(mermaidContainer);
+
+    const content = document.createElement('div');
+    content.className = 'card-content';
+
+    const title = document.createElement('h3');
+    title.className = 'card-title';
+    title.textContent = card.title ?? 'Card Title';
+
+    const description = document.createElement('p');
+    description.className = 'card-desc';
+    description.textContent = card.description ?? '';
+
+    const link = document.createElement('a');
+    link.className = 'card-link';
+    link.textContent = card.linkLabel ?? 'LEARN MORE';
+
+    if (card.learnMore && card.learnMore !== '#') {
+        link.href = card.learnMore;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+    } else {
+        link.href = '#';
+        link.classList.add('is-disabled');
+        link.setAttribute('aria-disabled', 'true');
+        link.textContent = 'NO LINK';
+    }
+
+    content.append(title, description, link);
+    article.append(visual, content);
+    return article;
+}
+
+function renderServiceSections() {
+    const container = byId('service-sections');
+    if (!container) {
+        return;
+    }
+    container.replaceChildren();
+
+    const sections = Array.isArray(templateConfig.serviceSections) ? templateConfig.serviceSections : [];
+    sections.forEach((sectionConfig) => {
+        const sectionWrapper = document.createElement('section');
+        sectionWrapper.className = 'service-section';
+        sectionWrapper.id = sectionConfig.id ?? '';
+
+        const header = document.createElement('div');
+        header.className = 'section-header';
+        const heading = document.createElement('h2');
+        heading.className = 'section-title';
+        heading.textContent = sectionConfig.title ?? 'SERVICES';
+        header.appendChild(heading);
+
+        const grid = document.createElement('div');
+        grid.className = 'service-grid';
+
+        const groups = Array.isArray(sectionConfig.groups) && sectionConfig.groups.length > 0
+            ? sectionConfig.groups
+            : [{ title: '', desc: '', cards: sectionConfig.cards ?? [] }];
+
+        groups.forEach((group) => {
+            if (group.title || group.desc) {
+                grid.appendChild(createGroupDivider(group, sectionConfig.theme));
+            }
+
+            const cards = Array.isArray(group.cards) ? group.cards : [];
+            cards.forEach((card) => {
+                grid.appendChild(createServiceCard(card, sectionConfig));
+            });
+        });
+
+        sectionWrapper.append(header, grid);
+        container.appendChild(sectionWrapper);
+    });
+}
+
+function renderContact() {
+    const contact = templateConfig.contact ?? {};
+    const section = byId('contact');
+    const actions = byId('contact-actions');
+
+    if (section && contact.sectionId) {
+        section.id = contact.sectionId;
+    }
+    setText('contact-panel-title', contact.panelTitle);
+    setText('contact-panel-uid', contact.panelUid);
+    setText('contact-description', contact.description);
+
+    if (!actions) {
+        return;
+    }
+    actions.replaceChildren();
+
+    const items = Array.isArray(contact.actions) ? contact.actions : [];
+    items.forEach((item) => {
+        const action = document.createElement('a');
+        action.className = 'action-btn';
+        action.href = item.href || '#';
+        action.textContent = item.label || 'LINK';
+        if (!String(item.href || '').startsWith('mailto:')) {
+            action.target = '_blank';
+            action.rel = 'noopener noreferrer';
+        }
+        actions.appendChild(action);
+    });
+}
+
+function buildDefaultNavigation() {
+    const items = [];
+
+    const hero = templateConfig.hero ?? {};
+    const skills = templateConfig.skills ?? {};
+    const contact = templateConfig.contact ?? {};
+
+    items.push({
+        label: hero.panelTitle || 'SYSTEM_ARCHITECTURE',
+        target: normalizeHashTarget(hero.sectionId || 'system-architecture')
+    });
+
+    const topPanels = Array.isArray(templateConfig.topPanels) ? templateConfig.topPanels : [];
+    topPanels.forEach((panel, index) => {
+        items.push({
+            label: panel.navLabel || panel.panelTitle || `TOP_PANEL_${index + 1}`,
+            target: normalizeHashTarget(panel.sectionId || `top-panel-${index + 1}`)
+        });
+    });
+
+    items.push({
+        label: skills.panelTitle || 'SKILL_SET',
+        target: normalizeHashTarget(skills.sectionId || 'skill-set')
+    });
+
+    const serviceSections = Array.isArray(templateConfig.serviceSections) ? templateConfig.serviceSections : [];
+    serviceSections.forEach((section) => {
+        items.push({
+            label: section.navLabel || section.title || section.id || 'SERVICES',
+            target: normalizeHashTarget(section.id || '')
+        });
+    });
+
+    items.push({
+        label: contact.panelTitle || 'CONTACT',
+        target: normalizeHashTarget(contact.sectionId || 'contact')
+    });
+
+    return items;
+}
+
+function renderNavigation() {
+    const nav = byId('header-nav');
+    if (!nav) {
+        return;
+    }
+    nav.replaceChildren();
+
+    const configuredNav = Array.isArray(templateConfig.navigation) && templateConfig.navigation.length > 0
+        ? templateConfig.navigation
+        : buildDefaultNavigation();
+
+    configuredNav.forEach((item) => {
+        const link = document.createElement('a');
+        link.className = 'nav-item';
+        link.href = normalizeHashTarget(item.target);
+        link.textContent = item.label || 'SECTION';
+        nav.appendChild(link);
+    });
+}
+
+function injectMermaidSources() {
+    const nodes = Array.from(document.querySelectorAll('.mermaid'));
+    const diagrams = templateConfig.diagrams ?? {};
+
+    nodes.forEach((container) => {
+        const mermaidId = container.getAttribute('data-mermaid-id') || '';
+        if (mermaidId && diagrams[mermaidId]) {
+            container.innerHTML = diagrams[mermaidId];
+            return;
+        }
+
+        const label = toSafeLabel(mermaidId || 'undefined_id');
+        container.innerHTML = `
+            graph TD
+            A[${label}] --> B[Define templateConfig.diagrams entry]
+        `;
+    });
+
+    return nodes;
+}
+
+function setupMermaidModal() {
+    const modal = byId('mermaid-modal');
+    const modalContent = byId('mermaid-modal-content');
+    const modalTitle = byId('mermaid-modal-title');
+
+    if (!modal || !modalContent || !modalTitle) {
+        return;
+    }
+
+    const targets = document.querySelectorAll('.graph-container, .card-visual');
+
+    const closeModal = () => {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        modalContent.replaceChildren();
+        document.body.classList.remove('modal-open');
+    };
+
+    const openModal = (target) => {
+        const sourceSvg = target.querySelector('.mermaid svg');
+        if (!sourceSvg) {
+            return;
+        }
+
+        const clonedSvg = sourceSvg.cloneNode(true);
+        const viewBox = sourceSvg.getAttribute('viewBox');
+        if (viewBox) {
+            const parts = viewBox.trim().split(/\s+/).map(Number);
+            if (parts.length === 4 && parts.every(Number.isFinite)) {
+                const zoom = 1.35;
+                clonedSvg.setAttribute('width', String(Math.round(parts[2] * zoom)));
+                clonedSvg.setAttribute('height', String(Math.round(parts[3] * zoom)));
+            }
+        } else {
+            const rect = sourceSvg.getBoundingClientRect();
+            clonedSvg.setAttribute('width', String(Math.round(rect.width * 1.35)));
+            clonedSvg.setAttribute('height', String(Math.round(rect.height * 1.35)));
+        }
+
+        modalContent.replaceChildren(clonedSvg);
+
+        const titleText =
+            target.closest('.service-card')?.querySelector('.card-title')?.textContent?.trim() ||
+            target.closest('.hero-panel')?.querySelector('.panel-title')?.textContent?.trim() ||
+            'Mermaid Diagram';
+        modalTitle.textContent = titleText;
+
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+    };
+
+    targets.forEach((target) => {
+        target.classList.add('mermaid-zoom-target');
+        target.setAttribute('tabindex', '0');
+        target.setAttribute('role', 'button');
+        target.setAttribute('aria-label', 'Open expanded Mermaid diagram');
+
+        target.addEventListener('click', () => openModal(target));
+        target.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openModal(target);
+            }
+        });
+    });
+
+    modal.querySelectorAll('[data-mermaid-close]').forEach((closeButton) => {
+        closeButton.addEventListener('click', closeModal);
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+            closeModal();
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    setSystemInfo();
+    renderHero();
+    renderTopPanels();
+    renderSkills();
+    renderServiceSections();
+    renderContact();
+    renderNavigation();
+    setupUptime();
     setupMobileNav();
-    setupLearnMoreLinks();
+
+    const mermaidNodes = injectMermaidSources();
+    await mermaid.run({ nodes: mermaidNodes });
+
     setupMermaidModal();
 });

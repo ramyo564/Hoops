@@ -16,411 +16,62 @@
 </head>
 
 <body>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
     <header class="status-bar">
         <div class="logo-area">
             <div class="status-indicator online"></div>
-            <span class="system-name">YOHAN_HOOPS_BACKEND_V.1.0</span>
+            <span id="system-name" class="system-name">YOHAN_HOOPS_BACKEND_V.1.0</span>
         </div>
-        <nav id="header-nav" class="nav-links" aria-label="Primary navigation">
-            <a href="#system-architecture" class="nav-item"><span class="nav-line">SYSTEM</span><span class="nav-line">ARCHITECTURE</span></a>
-            <a href="#backend-architecture" class="nav-item"><span class="nav-line">BACKEND</span><span class="nav-line">ARCHITECTURE</span></a>
-            <a href="#skill-set" class="nav-item"><span class="nav-line">SKILL</span><span class="nav-line">SET</span></a>
-            <a href="#backend-services" class="nav-item"><span class="nav-line">BACKEND</span><span class="nav-line">SERVICES</span></a>
-            <a href="#engineering-cases" class="nav-item"><span class="nav-line">ENGINEERING</span><span class="nav-line">CASES</span></a>
-            <a href="#devops-services" class="nav-item"><span class="nav-line">DEVOPS</span><span class="nav-line">SERVICES</span></a>
-            <a href="#contact" class="nav-item"><span class="nav-line">CONTACT</span></a>
-        </nav>
+
+        <nav id="header-nav" class="nav-links" aria-label="Primary navigation"></nav>
+
         <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-controls="header-nav"
             aria-expanded="false">
             <span></span>
             <span></span>
             <span></span>
         </button>
+
         <div class="time-display">
-            UPTIME: <span id="uptime">Loading...</span>
+            UPTIME: <span id="uptime">00:00:00</span>
         </div>
     </header>
 
     <main class="dashboard-grid">
-
-        <section id="system-architecture" class="panel hero-panel system-architecture-panel">
+        <section id="system-architecture" class="panel hero-panel">
             <div class="panel-header">
-                <span class="panel-title">SYSTEM_ARCHITECTURE</span>
-                <span class="panel-uid">ID: HOOPS-SYS-00</span>
+                <span id="hero-panel-title" class="panel-title">SYSTEM_ARCHITECTURE</span>
+                <span id="hero-panel-uid" class="panel-uid">ID: HOOPS-SYS-00</span>
             </div>
 
             <div class="graph-container">
-                <div class="mermaid" data-mermaid-id="hoops-system-overview"></div>
+                <div id="hero-mermaid" class="mermaid" data-mermaid-id="hoops-system-overview"></div>
             </div>
 
-            <div class="hero-message">
-                <p>> SERVICE: Location-based real-time basketball matching community platform</p>
-                <p>> CHANNELS: REST API + WebSocket(STOMP) + SSE notification stream</p>
-                <p>> CORE FLOWS: game management, invite/friend social graph, report/blacklist governance</p>
-                <p>> DELIVERY: GitHub Actions -> Docker Hub -> EC2 Self-hosted deployment pipeline</p>
-                <p>> DATA LAYER: MariaDB as source of truth, Redis for auth/session/emitter workflows</p>
-            </div>
+            <div id="hero-metrics" class="hero-message"></div>
         </section>
 
-        <section id="backend-architecture" class="panel hero-panel backend-architecture-panel">
-            <div class="panel-header">
-                <span class="panel-title">BACKEND_ARCHITECTURE</span>
-                <span class="panel-uid">ID: HOOPS-BE-01</span>
-            </div>
-
-            <div class="graph-container">
-                <div class="mermaid" data-mermaid-id="architecture"></div>
-            </div>
-
-            <div class="hero-message">
-                <p>> TEAM PROJECT: 7 members (Frontend 3 / Backend 4), 2024.04 ~ 2024.08</p>
-                <p>> ROLE: Backend design and implementation, CI/CD automation, infrastructure optimization</p>
-                <p>> DEPLOY TIME: 15m+ manual process -> under 3m automated pipeline</p>
-                <p>> IMAGE SIZE: Docker image optimized from 600MB -> 250MB (-58%)</p>
-                <p>> COST: AWS monthly infrastructure reduced by approximately 80%</p>
-            </div>
-        </section>
+        <div id="top-panels" class="top-panels"></div>
 
         <section id="skill-set" class="panel skills-panel">
             <div class="panel-header">
-                <span class="panel-title">SKILL_SET</span>
-                <span class="panel-uid">ID: STACK-MAP</span>
+                <span id="skills-panel-title" class="panel-title">SKILL_SET</span>
+                <span id="skills-panel-uid" class="panel-uid">ID: STACK-MAP</span>
             </div>
-
-            <div class="skill-grid">
-                <article class="skill-card">
-                    <h3 class="skill-card-title">BACKEND CORE</h3>
-                    <p class="skill-card-stack">JDK 17, Spring Boot 3.1, Spring Security, JPA, QueryDSL</p>
-                </article>
-                <article class="skill-card">
-                    <h3 class="skill-card-title">REALTIME</h3>
-                    <p class="skill-card-stack">WebSocket, STOMP, SSE, ChannelInterceptor, event-driven messaging</p>
-                </article>
-                <article class="skill-card">
-                    <h3 class="skill-card-title">SECURITY</h3>
-                    <p class="skill-card-stack">JWT, Kakao OAuth2, CORS whitelist policy, dynamic blacklist control</p>
-                </article>
-                <article class="skill-card">
-                    <h3 class="skill-card-title">DATA LAYER</h3>
-                    <p class="skill-card-stack">MariaDB, Redis, Specification-based filtering, pessimistic locking</p>
-                </article>
-                <article class="skill-card">
-                    <h3 class="skill-card-title">DEVOPS</h3>
-                    <p class="skill-card-stack">Docker, Docker Compose, GitHub Actions, AWS EC2/RDS/Route53</p>
-                </article>
-                <article class="skill-card">
-                    <h3 class="skill-card-title">QUALITY</h3>
-                    <p class="skill-card-stack">JUnit5, Spring Boot Test, controller/service test coverage, Swagger</p>
-                </article>
-            </div>
+            <div id="skill-grid" class="skill-grid"></div>
         </section>
 
-        <div id="backend-services" class="section-header">
-            <h2 class="section-title">BACKEND_SERVICES</h2>
-        </div>
-        <section class="service-grid backend-service-grid">
-            <div class="backend-group-divider">
-                <span class="backend-group-title">CORE DOMAINS</span>
-                <span class="backend-group-desc">Users/Auth / Game / Social / Governance</span>
-            </div>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-domain-map"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Domain Package Map</h3>
-                    <p class="card-desc">Package structure is split by domain boundaries: users, game, chat, invite,
-                        friends, alarm, reports, and manager.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-game-flow"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Game Management Flow</h3>
-                    <p class="card-desc">Game creation, dynamic filtering, participant approval/reject, and kickoff
-                        management are modeled through dedicated service and repository layers.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-social-flow"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Social Domain Flow</h3>
-                    <p class="card-desc">Friend and invite workflows are connected to game participation so users can
-                        recruit teammates and coordinate game entry states.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-governance-flow"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Report & Governance</h3>
-                    <p class="card-desc">Report submissions, manager review, blacklist actions, and manner score
-                        updates form moderation workflows for community quality control.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <div class="backend-group-divider">
-                <span class="backend-group-title">REALTIME & SECURITY</span>
-                <span class="backend-group-desc">Chat / Notifications / AuthN-AuthZ / WebSocket Guard</span>
-            </div>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-chat-realtime"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Realtime Chat Architecture</h3>
-                    <p class="card-desc">WebSocket + STOMP messaging supports room chat, persistence, and targeted
-                        history delivery for users joining in progress.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-notification-sse"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">SSE Notification Pipeline</h3>
-                    <p class="card-desc">Notification service emits server-sent events to online managers so critical
-                        actions like reports are surfaced immediately.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-auth-security"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">JWT + OAuth2 Security</h3>
-                    <p class="card-desc">API requests are protected by JWT filters, while OAuth2 login and CORS
-                        whitelist policies enforce external access control.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card backend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-ws-security-fix"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">WebSocket Security Fix</h3>
-                    <p class="card-desc">A ChannelInterceptor-based authorization layer blocks unauthorized chat room
-                        access by validating token ownership against participant membership.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-        </section>
-
-        <div id="engineering-cases" class="section-header">
-            <h2 class="section-title">ENGINEERING_CASES</h2>
-        </div>
-        <section class="service-grid">
-            <article class="service-card frontend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-chat-history-fix"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Chat History Delivery Fix</h3>
-                    <p class="card-desc">Duplicate history broadcasts were removed by separating public topic streams
-                        from per-user queue delivery channels for new entrants.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card frontend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-dynamic-search-spec"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Dynamic Search Specification</h3>
-                    <p class="card-desc">Specification-based query composition handles multi-condition game search
-                        without exploding if-else branches or endpoint sprawl.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card frontend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-common-dto-api"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Single Endpoint + Common DTO</h3>
-                    <p class="card-desc">`GET /api/games` consolidates varied listing scenarios into one endpoint with a
-                        consistent response model for frontend simplicity.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card frontend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-manner-concurrency"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Manner Point Concurrency</h3>
-                    <p class="card-desc">Pessimistic locking ensures score consistency under concurrent evaluations,
-                        preventing lost updates during post-game rating bursts.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card frontend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-jwt-component"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Reusable JwtTokenExtract</h3>
-                    <p class="card-desc">Authentication parsing is centralized into a reusable component to improve
-                        testability, reduce duplication, and support both HTTP and WebSocket contexts.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card frontend-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-test-coverage"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Controller & Service Tests</h3>
-                    <p class="card-desc">The project includes focused controller/service tests across game, invite,
-                        friend, manager, report, user, and chat scenarios.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-        </section>
-
-        <div id="devops-services" class="section-header">
-            <h2 class="section-title">DEVOPS_SERVICES</h2>
-        </div>
-        <section class="service-grid devops-service-grid">
-            <div class="devops-group-divider">
-                <span class="devops-group-title">DELIVERY PIPELINE</span>
-                <span class="devops-group-desc">Docker Build / GitHub Actions / Self-hosted Deploy</span>
-            </div>
-
-            <article class="service-card devops-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-docker-standardization"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Docker Standardization</h3>
-                    <p class="card-desc">Backend runtime is containerized for consistent local/server environments,
-                        eliminating machine-specific setup drift.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card devops-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-multi-stage-build"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Multi-stage Build Optimization</h3>
-                    <p class="card-desc">Build/runtime separation trims image size from ~600MB to ~250MB, reducing
-                        registry transfer and deployment time.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card devops-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-github-actions-cicd"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">GitHub Actions CI/CD</h3>
-                    <p class="card-desc">Push to main triggers build, Docker Hub publish, and deployment orchestration,
-                        turning repetitive manual operations into a stable pipeline.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card devops-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-self-hosted-deploy"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Self-hosted Runner Deploy</h3>
-                    <p class="card-desc">A self-hosted EC2 runner performs pull/up/prune steps for near-zero-touch
-                        deployments and controlled runtime updates.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <div class="devops-group-divider">
-                <span class="devops-group-title">COST & INFRA OPTIMIZATION</span>
-                <span class="devops-group-desc">AWS network hardening / Redis strategy / monthly cost reduction</span>
-            </div>
-
-            <article class="service-card devops-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-aws-cost-optimization"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">AWS Cost Optimization</h3>
-                    <p class="card-desc">Infrastructure policy adjustments reduced monthly operational cost by roughly
-                        80% while retaining a stable deployment environment.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card devops-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-rds-private-network"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">RDS Private Access Model</h3>
-                    <p class="card-desc">RDS public exposure was removed in favor of private VPC-only connectivity,
-                        improving security posture and reducing unnecessary network cost.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-
-            <article class="service-card devops-card">
-                <div class="card-visual">
-                    <div class="mermaid" data-mermaid-id="hoops-redis-container-shift"></div>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">ElastiCache to Container Redis</h3>
-                    <p class="card-desc">Redis workload moved from managed ElastiCache to controlled Docker runtime on
-                        EC2 for better budget alignment and predictable operations.</p>
-                    <a href="#" class="card-link">LEARN MORE</a>
-                </div>
-            </article>
-        </section>
+        <div id="service-sections"></div>
 
         <section id="contact" class="panel contact-panel">
             <div class="panel-header">
-                <span class="panel-title">CONTACT</span>
-                <span class="panel-uid">ID: COMMS-01</span>
+                <span id="contact-panel-title" class="panel-title">CONTACT</span>
+                <span id="contact-panel-uid" class="panel-uid">ID: COMMS-01</span>
             </div>
             <div class="contact-content">
-                <p>Submit transmission to initiate collaboration.</p>
-                <div class="contact-actions">
-                    <a href="mailto:yohan032yohan@gmail.com" class="action-btn">
-                        <span class="icon">✉</span> SEND_EMAIL
-                    </a>
-                    <a href="https://github.com/ramyo564" class="action-btn" target="_blank" rel="noopener noreferrer">
-                        <span class="icon">⚡</span> GITHUB
-                    </a>
-                    <a href="https://www.youtube.com/@yohanjang-xe9td" class="action-btn" target="_blank"
-                        rel="noopener noreferrer">
-                        <span class="icon">▶</span> YOUTUBE
-                    </a>
-                </div>
+                <p id="contact-description">Submit transmission to initiate collaboration.</p>
+                <div id="contact-actions" class="contact-actions"></div>
             </div>
         </section>
     </main>
@@ -428,17 +79,11 @@
     <div id="mermaid-modal" class="mermaid-modal" aria-hidden="true">
         <div class="mermaid-modal-backdrop" data-mermaid-close></div>
         <div class="mermaid-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="mermaid-modal-title">
-            <button type="button" class="mermaid-modal-close" data-mermaid-close aria-label="Close expanded diagram">
-                CLOSE
-            </button>
-            <div class="mermaid-modal-header">
-                <span id="mermaid-modal-title">Expanded Diagram</span>
-            </div>
+            <button class="mermaid-modal-close" type="button" data-mermaid-close>CLOSE</button>
+            <div id="mermaid-modal-title" class="mermaid-modal-header">Mermaid Diagram</div>
             <div id="mermaid-modal-content" class="mermaid-modal-content"></div>
         </div>
     </div>
-
-    <div class="grid-overlay"></div>
 </body>
 
 </html>
