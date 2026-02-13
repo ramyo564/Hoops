@@ -55,7 +55,7 @@ export const templateConfig = {
             diagramId: 'architecture',
             navLabel: 'BACKEND_ARCHITECTURE',
             panelClass: 'backend-architecture-panel',
-            metrics: ["TEAM PROJECT: 7 members (Frontend 3 / Backend 4), 2024.04 ~ 2024.08", "ROLE: Backend design and implementation, CI/CD automation, infrastructure optimization", "DEPLOY TIME: 15m+ manual process -> under 3m automated pipeline", "IMAGE SIZE: Docker image optimized from 600MB -> 250MB (-58%)", "COST: AWS monthly infrastructure reduced by approximately 80%"]
+            metrics: ["TEAM PROJECT: 7 members (Frontend 3 / Backend 4), 2024.04 ~ 2024.08", "MY ROLE: Backend design and implementation, CI/CD automation, infrastructure optimization", "DEPLOY TIME: 15m+ manual process -> under 3m automated pipeline", "IMAGE SIZE: Docker image optimized from 600MB -> 250MB (-58%)", "COST: AWS monthly infrastructure reduced by approximately 80%"]
         }
     ],
 
