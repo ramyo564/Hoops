@@ -10,7 +10,6 @@
 - [4. 기여한 부분](https://github.com/ramyo564/Hoops?tab=readme-ov-file#-%EC%A0%9C%EA%B0%80-%EA%B8%B0%EC%97%AC%ED%95%9C-%EB%B6%80%EB%B6%84-my-contribution)
 - [5. 기술스택](https://github.com/ramyo564/Hoops?tab=readme-ov-file#-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D-tech-stack)
 
-
 ## 📌 프로젝트 소개
 
 이 프로젝트는 제로베이스에서 7인 팀으로 진행한 파이널 프로젝트로,   
@@ -31,6 +30,7 @@
 ![전체아키텍처](https://github.com/user-attachments/assets/e5034081-7ccc-497f-90c2-3dfd71094cd0)
 
 
+<a id="lm-backend-architecture"></a>
 ### 백엔드 아키텍처
 
 
@@ -170,6 +170,7 @@ graph LR
 </details>
 <br>  
 
+<a id="lm-social-domain-flow"></a>
 ### 👥 소셜 기능
 
 - **친구 시스템**: 친구 검색, 신청, 수락/거절, 삭제
@@ -290,6 +291,7 @@ hoops
 
 <br>
 
+<a id="lm-contrib-chat-realtime"></a>
 ### 📌 1. 실시간 채팅 기능 개발 (WebSocket, STOMP)
 
 > 경기에 참여한 팀원들 간의 실시간 소통과 커뮤니티 활성화를 위해 웹소켓 기반의 채팅 기능을 개발했습니다.
@@ -313,6 +315,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 <br>
 
+<a id="lm-contrib-chat-history-fix"></a>
 #### ❗ 핵심 문제 해결 과정: '신규 입장자'를 위한 이전 대화 불러오기 기능의 메시지 중복 전송 문제
 
 > 채팅 기능을 구현하며 가장 큰 난관은 **'채팅방에 새로 입장한 사용자가 이전 대화 내용을 볼 수 있게 하는'** 요구사항이었습니다.
@@ -347,6 +350,8 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 ---
 
 
+<a id="lm-contrib-game-flow"></a>
+<a id="lm-contrib-dynamic-search"></a>
 ### 📌 2. 동적 검색 및 필터링 기능 구현 (Specification, API 설계)
 
 > 사용자가 원하는 경기를 날짜, 경기 형식, 지역 등 다양한 조건으로 손쉽게 찾을 수 있도록 유연하고 확장 가능한 검색 API를 설계하고 구현했습니다.
@@ -371,6 +376,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 <br>
 
+<a id="lm-contrib-common-dto"></a>
 #### ❗ 핵심 문제 해결 과정: 하나의 API, 일관된 응답 (Single Endpoint, Common DTO)
 
 > 단순히 동적 쿼리를 구현하는 것을 넘어, API의 재사용성과 프론트엔드 개발 효율성까지 고려했습니다.
@@ -401,6 +407,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 ---
 
+<a id="lm-contrib-security"></a>
 ### 📌 3. Spring Security 기반의 API 보안 시스템 구축
 
 > 안전하고 신뢰할 수 있는 서비스 환경을 제공하기 위해, Spring Security를 기반으로 **외부의 비인가 접근을 차단(CORS)** 하고 **내부의 악의적인 사용자를 제어(Blacklist)** 하는 다층적 보안 시스템을 설계하고 구현했습니다.
@@ -464,6 +471,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 ---
 
+<a id="lm-contrib-governance"></a>
 ### 📌 4. 커뮤니티 자정 작용을 위한 사용자 평가 및 신고 시스템 구축
 > 클린한 농구 커뮤니티를 조성하기 위해, 긍정적 행동을 장려하는 **매너 포인트 시스템(Proactive)** 과 부정적 행동을 제재하는 **신고 시스템(Reactive)** 을 유기적으로 연동하여 구현했습니다.
 
@@ -476,6 +484,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 <br>
 
+<a id="lm-contrib-manner-concurrency"></a>
 #### 👍 1. 상호 평가 기반의 매너 포인트 시스템 설계
 
 > 경기 종료 후 참가자들이 서로의 매너를 평가하는 시스템을 도입하여, 사용자 스스로 긍정적인 분위기를 만들도록 유도했습니다.
@@ -496,6 +505,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 <br>
 
+<a id="lm-contrib-sse-notification"></a>
 #### 🚨 2. 비매너 사용자 신고 및 실시간 관리자 알림 시스템
 
 > 직접적인 제재가 필요한 비매너 행위를 처리하기 위해, 관리자와 직접 연동되는 신고 시스템을 구축했습니다.
@@ -532,6 +542,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 ---
 
+<a id="lm-contrib-ws-security"></a>
 ### 📌 5. 재사용 가능한 인증 컴포넌트 설계 및 WebSocket 보안 적용
 
 일관성 있고 테스트가 용이한 인증 로직을 위해 **재사용 가능한 인증 컴포넌트(`JwtTokenExtract`)** 를 설계했습니다.   
@@ -553,6 +564,7 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 <br>
 
+<a id="lm-contrib-jwt-component"></a>
 #### 🔧 해결 과정: `JwtTokenExtract` 컴포넌트의 설계와 확장
 
 > 이 문제들을 해결하기 위해, 처음부터 인증 로직을 중앙에서 관리하는 **`JwtTokenExtract` 컴포넌트** 를 설계하고 점진적으로 발전시켰습니다.
@@ -619,6 +631,8 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 #### 🔧 해결 과정 및 시스템 설계
 
+<a id="lm-devops-docker-standardization"></a>
+<a id="lm-devops-multistage-build"></a>
 #### 🔑 1. Docker를 이용한 개발/배포 환경 표준화
 
 가장 먼저 "제 PC에서는 잘 되는데요?" 문제를 해결하기 위해 Docker를 도입했습니다.
@@ -637,6 +651,8 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 <br>
 
+<a id="lm-devops-github-actions"></a>
+<a id="lm-devops-self-hosted-deploy"></a>
 #### 🔑 2. GitHub Actions 기반의 CI/CD 파이프라인 구축
 
 반복적인 배포 작업을 자동화하기 위해 CI/CD 도구로 GitHub Actions를 선택했습니다. Jenkins와 비교했을 때, 별도의 서버 구축 없이 GitHub 저장소에 내장된 기능을 사용할 수 있어 **비용 및 구현 난이도** 면에서 가장 합리적이었습니다.
@@ -654,6 +670,9 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 
 <br>
 
+<a id="lm-devops-aws-cost-optimization"></a>
+<a id="lm-devops-rds-private"></a>
+<a id="lm-devops-redis-container-shift"></a>
 #### 🔑 3. AWS 인프라 최적화 및 비용 절감
 
 자동화와 더불어 불필요한 비용을 줄이는 데 집중했습니다.
@@ -725,8 +744,8 @@ WebSocket을 통해 서버는 이벤트 발생 시점에만 클라이언트에 �
 - **CI/CD**: GitHub Actions V3
 - **Cloud**: AWS (EC2, RDS, Route53)
 
+<a id="lm-tools-testing"></a>
 ### Tools & Testing
 - **Build**: Gradle
 - **Testing**: JUnit 5, Spring-Boot-Starter-Test
 - **Collaboration**: Git, Git Flow, Swagger (springdoc)
-
