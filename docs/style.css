@@ -1,3 +1,133 @@
+/* Recruiter Brief Section */
+.section-recruiter-brief {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(88, 166, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.section-recruiter-kicker {
+    font-family: var(--font-code);
+    font-size: 0.7rem;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+}
+
+.section-recruiter-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.section-recruiter-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.section-recruiter-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.section-recruiter-card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-3px);
+    background: rgba(88, 166, 255, 0.08);
+}
+
+.section-recruiter-card-id {
+    font-family: var(--font-code);
+    font-size: 0.65rem;
+    color: var(--accent-orange);
+    margin-bottom: 0.3rem;
+}
+
+.section-recruiter-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.section-recruiter-card-toggle-hint {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: auto;
+}
+
+.section-recruiter-card-toggle-hint::after {
+    content: "▼";
+    transition: transform 0.3s ease;
+}
+
+.section-recruiter-card.is-expanded .section-recruiter-card-toggle-hint::after {
+    transform: rotate(180deg);
+}
+
+.section-recruiter-card-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    opacity: 0;
+}
+
+.section-recruiter-card.is-expanded .section-recruiter-card-details {
+    max-height: 1000px;
+    opacity: 1;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.section-recruiter-card-row {
+    margin-bottom: 0.6rem;
+}
+
+.section-recruiter-card-key {
+    display: block;
+    font-family: var(--font-code);
+    font-weight: bold;
+    color: var(--accent-orange);
+    font-size: 0.65rem;
+    margin-bottom: 0.15rem;
+}
+
+.section-recruiter-card-value {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.section-recruiter-actions {
+    margin-top: 1.5rem;
+}
+
+/* Highlight Animation */
+@keyframes target-highlight-pulse {
+    0% { background-color: rgba(88, 166, 255, 0.5); box-shadow: 0 0 0 6px rgba(88, 166, 255, 0.3); }
+    50% { background-color: rgba(88, 166, 255, 0.2); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15); }
+    100% { background-color: transparent; box-shadow: none; }
+}
+.is-target-highlight {
+    animation: target-highlight-pulse 2s ease-out forwards !important;
+    scroll-margin-top: 100px;
+}
+
 :root {
     --bg-color: #0d1117;
     --panel-bg: #161b22;
@@ -158,8 +288,8 @@ body.modal-open {
 
 .top-panels {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.4rem;
+    grid-template-columns: 1fr;
+    gap: 2rem;
 }
 
 .top-panels:empty {
@@ -901,4 +1031,29 @@ body.modal-open {
         font-size: 0.66rem;
         padding: 0.22rem 0.35rem;
     }
+}
+
+/* Unified Recruiter Card Button Design */
+.card-extra-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.78rem;
+    padding: 0.5rem 0.95rem;
+    border: 1px solid var(--accent-blue);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    background: rgba(88, 166, 255, 0.1);
+    font-family: var(--font-code);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.8rem;
+}
+
+.card-extra-btn:hover {
+    color: #ffffff;
+    background: var(--accent-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(88, 166, 255, 0.2);
 }

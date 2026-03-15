@@ -1,4 +1,3 @@
-
 const analyticsSession = {
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`,
     pageType: 'portfolio',
@@ -218,11 +217,9 @@ function setupAnalyticsLifecycle() {
     window.addEventListener('beforeunload', () => endAnalyticsSession('beforeunload'));
 }
 
-// Ensure lifecycle is initialized
 document.addEventListener('DOMContentLoaded', () => {
     setupAnalyticsLifecycle();
 });
-
 
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 import { templateConfig } from './config.js';
@@ -255,9 +252,7 @@ function byId(id) {
 }
 
 function normalizeHashTarget(target) {
-    if (!target) {
-        return '#';
-    }
+    if (!target) return '#';
     return target.startsWith('#') ? target : `#${target}`;
 }
 
@@ -267,17 +262,12 @@ function toSafeLabel(value) {
 
 function setText(id, value) {
     const el = byId(id);
-    if (el && value) {
-        el.textContent = value;
-    }
+    if (el && value) el.textContent = value;
 }
 
 function setupUptime() {
     const uptimeElement = byId('uptime');
-    if (!uptimeElement) {
-        return;
-    }
-
+    if (!uptimeElement) return;
     const startTime = new Date();
     const updateUptime = () => {
         const now = new Date();
@@ -287,7 +277,6 @@ function setupUptime() {
         const s = (diff % 60).toString().padStart(2, '0');
         uptimeElement.textContent = `${h}:${m}:${s}`;
     };
-
     updateUptime();
     setInterval(updateUptime, 1000);
 }
@@ -295,68 +284,31 @@ function setupUptime() {
 function setupMobileNav() {
     const nav = byId('header-nav');
     const toggle = document.querySelector('.nav-toggle');
-    if (!nav || !toggle) {
-        return;
-    }
-
+    if (!nav || !toggle) return;
     const closeNav = () => {
         nav.classList.remove('is-open');
         toggle.classList.remove('is-open');
         toggle.setAttribute('aria-expanded', 'false');
     };
-
     const openNav = () => {
         nav.classList.add('is-open');
         toggle.classList.add('is-open');
         toggle.setAttribute('aria-expanded', 'true');
     };
-
-    toggle.addEventListener('click', (event) => {
-        event.stopPropagation();
-        if (nav.classList.contains('is-open')) {
-            closeNav();
-        } else {
-            openNav();
-        }
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        nav.classList.contains('is-open') ? closeNav() : openNav();
     });
-
-    nav.addEventListener('click', (event) => {
-        const target = event.target;
-        if (
-            target instanceof HTMLElement &&
-            (target.classList.contains('nav-item') || target.classList.contains('nav-sub-item'))
-        ) {
-            closeNav();
-        }
+    nav.addEventListener('click', (e) => {
+        if (e.target instanceof HTMLElement && (e.target.classList.contains('nav-item'))) closeNav();
     });
-
-    document.addEventListener('click', (event) => {
-        const target = event.target;
-        if (!(target instanceof Node)) {
-            return;
-        }
-        if (!nav.contains(target) && !toggle.contains(target)) {
-            closeNav();
-        }
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            closeNav();
-        }
-    });
-
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            closeNav();
-        }
+    document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target) && !toggle.contains(e.target)) closeNav();
     });
 }
 
 function setSystemInfo() {
-    if (templateConfig.system?.documentTitle) {
-        document.title = templateConfig.system.documentTitle;
-    }
+    if (templateConfig.system?.documentTitle) document.title = templateConfig.system.documentTitle;
     setText('system-name', templateConfig.system?.systemName);
 }
 
@@ -365,38 +317,27 @@ function renderHero() {
     const section = byId('system-architecture');
     const metrics = byId('hero-metrics');
     const mermaidContainer = byId('hero-mermaid');
-
-    if (section && hero.sectionId) {
-        section.id = hero.sectionId;
-    }
+    if (section && hero.sectionId) section.id = hero.sectionId;
     setText('hero-panel-title', hero.panelTitle);
     setText('hero-panel-uid', hero.panelUid);
-
-    if (mermaidContainer && hero.diagramId) {
-        mermaidContainer.setAttribute('data-mermaid-id', hero.diagramId);
-    }
-
-    if (!metrics) {
-        return;
-    }
+    if (mermaidContainer && hero.diagramId) mermaidContainer.setAttribute('data-mermaid-id', hero.diagramId);
+    if (!metrics) return;
     metrics.replaceChildren();
-    renderMetricLines(metrics, hero.metrics, '> Add metrics in templateConfig.hero.metrics');
+    renderMetricLines(metrics, hero.metrics, '> Add metrics in config');
 }
 
-function renderMetricLines(container, lines, fallbackText) {
-    const metricLines = Array.isArray(lines) ? lines : [];
-    if (metricLines.length === 0) {
-        const fallback = document.createElement('p');
-        fallback.textContent = fallbackText;
-        container.appendChild(fallback);
+function renderMetricLines(container, lines, fallback) {
+    const items = Array.isArray(lines) ? lines : [];
+    if (items.length === 0) {
+        const p = document.createElement('p');
+        p.textContent = fallback;
+        container.appendChild(p);
         return;
     }
-
-    metricLines.forEach((line) => {
-        const item = document.createElement('p');
-        const cleanLine = String(line).replace(/^>\s*/, '');
-        item.textContent = `> ${cleanLine}`;
-        container.appendChild(item);
+    items.forEach(line => {
+        const p = document.createElement('p');
+        p.textContent = `> ${String(line).replace(/^>\s*/, '')}`;
+        container.appendChild(p);
     });
 }
 
@@ -404,867 +345,375 @@ function createTopPanel(panel, index) {
     const section = document.createElement('section');
     section.className = `panel hero-panel ${panel.panelClass ?? ''}`.trim();
     section.id = panel.sectionId || `top-panel-${index + 1}`;
-
     const header = document.createElement('div');
     header.className = 'panel-header';
-
     const title = document.createElement('span');
     title.className = 'panel-title';
     title.textContent = panel.panelTitle || `TOP_PANEL_${index + 1}`;
-
     const uid = document.createElement('span');
     uid.className = 'panel-uid';
     uid.textContent = panel.panelUid || `ID: TOP-${String(index + 1).padStart(2, '0')}`;
-
     header.append(title, uid);
-
     const graphContainer = document.createElement('div');
     graphContainer.className = 'graph-container';
     const mermaidContainer = document.createElement('div');
     mermaidContainer.className = 'mermaid';
     mermaidContainer.setAttribute('data-mermaid-id', panel.diagramId || '');
     graphContainer.appendChild(mermaidContainer);
-
     const metrics = document.createElement('div');
     metrics.className = 'hero-message';
-    renderMetricLines(metrics, panel.metrics, '> Add metrics in templateConfig.topPanels');
-
+    renderMetricLines(metrics, panel.metrics, '> Add metrics');
     section.append(header, graphContainer, metrics);
     return section;
 }
 
 function renderTopPanels() {
     const container = byId('top-panels');
-    if (!container) {
-        return;
-    }
+    if (!container) return;
     container.replaceChildren();
-
     const panels = Array.isArray(templateConfig.topPanels) ? templateConfig.topPanels : [];
-    panels.forEach((panel, index) => {
-        container.appendChild(createTopPanel(panel, index));
-    });
+    panels.forEach((p, i) => container.appendChild(createTopPanel(p, i)));
 }
 
 function renderSkills() {
-    const skillsConfig = templateConfig.skills ?? {};
-    const section = byId('skill-set');
+    const config = templateConfig.skills ?? {};
     const grid = byId('skill-grid');
-    if (!grid) {
-        return;
-    }
-
-    if (section && skillsConfig.sectionId) {
-        section.id = skillsConfig.sectionId;
-    }
-    setText('skills-panel-title', skillsConfig.panelTitle);
-    setText('skills-panel-uid', skillsConfig.panelUid);
-
+    if (!grid) return;
+    setText('skills-panel-title', config.panelTitle);
+    setText('skills-panel-uid', config.panelUid);
     grid.replaceChildren();
-    const items = Array.isArray(skillsConfig.items) ? skillsConfig.items : [];
-
-    items.forEach((item) => {
+    (config.items ?? []).forEach(item => {
         const card = document.createElement('article');
         card.className = 'skill-card';
-
         const title = document.createElement('h3');
         title.className = 'skill-card-title';
-        title.textContent = item.title ?? 'CATEGORY';
-
+        title.textContent = item.title ?? '';
         const stack = document.createElement('p');
         stack.className = 'skill-card-stack';
         stack.textContent = item.stack ?? '';
-
         card.append(title, stack);
         grid.appendChild(card);
     });
 }
 
-function createGroupDivider(group, sectionTheme) {
-    const divider = document.createElement('div');
-    divider.className = 'group-divider';
-    divider.setAttribute('data-theme', sectionTheme || 'blue');
-
+function createGroupDivider(group, theme) {
+    const div = document.createElement('div');
+    div.className = 'group-divider';
+    div.setAttribute('data-theme', theme || 'blue');
     const title = document.createElement('span');
     title.className = 'group-title';
     title.textContent = group.title ?? '';
-
     const desc = document.createElement('span');
     desc.className = 'group-desc';
     desc.textContent = group.desc ?? '';
-
-    divider.append(title, desc);
-    return divider;
+    div.append(title, desc);
+    return div;
 }
 
 function createMetaLine(label, value) {
-    if (!value) {
-        return null;
-    }
-
-    const line = document.createElement('p');
-    line.className = 'card-meta-line';
-
+    if (!value) return null;
+    const p = document.createElement('p');
+    p.className = 'card-meta-line';
     const key = document.createElement('span');
     key.className = 'meta-label';
     key.textContent = `${label}:`;
-
-    const text = document.createElement('span');
-    text.className = 'meta-value';
-    text.textContent = value;
-
-    line.append(key, text);
-    return line;
-}
-
-function createTagList(tags) {
-    const normalizedTags = Array.isArray(tags) ? tags.filter(Boolean) : [];
-    if (normalizedTags.length === 0) {
-        return null;
-    }
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'card-tags';
-
-    normalizedTags.forEach((tag) => {
-        const item = document.createElement('span');
-        item.className = 'card-tag';
-        item.textContent = tag;
-        wrapper.appendChild(item);
-    });
-
-    return wrapper;
-}
-
-function createHighlightList(items) {
-    const normalizedItems = Array.isArray(items) ? items.filter(Boolean) : [];
-    if (normalizedItems.length === 0) {
-        return null;
-    }
-
-    const list = document.createElement('ul');
-    list.className = 'card-highlights';
-    normalizedItems.forEach((item) => {
-        const line = document.createElement('li');
-        line.textContent = item;
-        list.appendChild(line);
-    });
-    return list;
+    const val = document.createElement('span');
+    val.className = 'meta-value';
+    val.textContent = value;
+    p.append(key, val);
+    return p;
 }
 
 function createCardLinks(card) {
-    const links = Array.isArray(card.links) ? card.links.filter((item) => item?.href) : [];
-    if (links.length === 0 && card.learnMore && card.learnMore !== '#') {
-        links.push({ label: card.linkLabel ?? 'LEARN MORE', href: card.learnMore });
-    }
-
-    if (links.length === 0) {
-        return null;
-    }
-
+    const links = Array.isArray(card.links) ? card.links.filter(l => l?.href) : [];
+    if (links.length === 0) return null;
     const wrapper = document.createElement('div');
     wrapper.className = 'card-links';
-
-    links.forEach((item) => {
+    links.forEach(item => {
         const link = document.createElement('a');
         link.className = 'card-link';
         const variant = String(item.variant ?? '').trim().toLowerCase();
-        if (variant) {
-            link.classList.add(`is-${variant}`);
-        }
+        if (variant) link.classList.add(`is-${variant}`);
         link.href = item.href;
         link.textContent = item.label || 'LINK';
         if (!String(item.href).startsWith('mailto:')) {
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
         }
-
-        // GA4 Event Tracking
-        link.addEventListener('click', () => {
-            trackSelectContent({
-                contentType: 'case_link',
-                itemId: card.title || 'unknown_case',
-                itemName: card.title || 'Case',
-                sectionName: 'cases',
-                interactionAction: 'click',
-                elementType: 'link',
-                elementLabel: item.label,
-                linkUrl: item.href,
-                linkType: 'external'
-            });
-        });
-
         wrapper.appendChild(link);
     });
-
     return wrapper;
 }
 
 function createServiceCard(card, sectionConfig) {
     const article = document.createElement('article');
     article.className = `service-card ${sectionConfig.cardClass ?? ''} ${card.cardClass ?? ''}`.trim();
-
+    if (card.mermaidId) article.id = card.mermaidId;
     const visual = document.createElement('div');
     visual.className = 'card-visual';
-    const visualHeight = card.visualHeight || sectionConfig.cardVisualHeight;
-    if (visualHeight) {
-        visual.style.setProperty('--card-visual-height', visualHeight);
-    }
-
-    const mermaidContainer = document.createElement('div');
-    mermaidContainer.className = 'mermaid';
-    mermaidContainer.setAttribute('data-mermaid-id', card.mermaidId ?? '');
-    visual.appendChild(mermaidContainer);
-
+    const vHeight = card.visualHeight || sectionConfig.cardVisualHeight;
+    if (vHeight) visual.style.setProperty('--card-visual-height', vHeight);
+    const mermaidDiv = document.createElement('div');
+    mermaidDiv.className = 'mermaid';
+    mermaidDiv.setAttribute('data-mermaid-id', card.mermaidId ?? '');
+    visual.appendChild(mermaidDiv);
     const content = document.createElement('div');
     content.className = 'card-content';
-
     const title = document.createElement('h3');
     title.className = 'card-title';
-    title.textContent = card.title ?? 'Card Title';
-
-    const subtitleText = card.subtitle ?? card.period ?? '';
-    const subtitle = document.createElement('p');
-    subtitle.className = 'card-subtitle';
-    subtitle.textContent = subtitleText;
-
-    const description = document.createElement('p');
-    description.className = 'card-desc';
-    description.textContent = card.overview ?? card.description ?? '';
-
-    const roleLine = createMetaLine('ROLE', card.role);
-    const stackLine = createMetaLine('STACK', card.stackSummary);
-    const tags = createTagList(card.skills);
-    const highlights = createHighlightList(card.highlights);
+    title.textContent = card.title ?? '';
+    const desc = document.createElement('p');
+    desc.className = 'card-desc';
+    desc.textContent = card.overview ?? card.description ?? '';
+    content.append(title, desc);
+    const role = createMetaLine('ROLE', card.role);
+    if (role) content.append(role);
+    const stack = createMetaLine('STACK', card.stackSummary);
+    if (stack) content.append(stack);
     const links = createCardLinks(card);
-
-    content.append(title);
-    if (subtitleText) {
-        content.append(subtitle);
-    }
-    content.append(description);
-    if (roleLine) {
-        content.append(roleLine);
-    }
-    if (stackLine) {
-        content.append(stackLine);
-    }
-    if (tags) {
-        content.append(tags);
-    }
-    if (highlights) {
-        content.append(highlights);
-    }
-    if (links) {
-        content.append(links);
-    }
+    if (links) content.append(links);
     article.append(visual, content);
     return article;
 }
 
+let caseShowcaseControllers = [];
+
+function createSectionRecruiterBrief(sectionConfig) {
+    const brief = sectionConfig?.recruiterBrief;
+    if (!brief) return null;
+    const quickCases = (brief.cases || []).map(item => ({
+        id: String(item?.id || '').trim(),
+        anchorId: String(item?.anchorId || '').trim(),
+        title: String(item?.title || '').trim(),
+        problem: String(item?.problem || '').trim(),
+        action: String(item?.action || '').trim(),
+        impact: String(item?.impact || '').trim()
+    })).filter(i => i.id || i.title);
+
+    const wrapper = document.createElement('section');
+    wrapper.className = 'section-recruiter-brief';
+    if (brief.kicker) {
+        const kicker = document.createElement('p');
+        kicker.className = 'section-recruiter-kicker';
+        kicker.textContent = brief.kicker;
+        wrapper.appendChild(kicker);
+    }
+    if (brief.title) {
+        const title = document.createElement('h3');
+        title.className = 'section-recruiter-title';
+        title.textContent = brief.title;
+        wrapper.appendChild(title);
+    }
+
+    if (quickCases.length > 0) {
+        const grid = document.createElement('div');
+        grid.className = 'section-recruiter-card-grid';
+        quickCases.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'section-recruiter-card';
+            const header = document.createElement('div');
+            header.className = 'section-recruiter-card-header';
+            const idLine = document.createElement('p');
+            idLine.className = 'section-recruiter-card-id';
+            idLine.textContent = item.id;
+            const cardTitle = document.createElement('h4');
+            cardTitle.className = 'section-recruiter-card-title';
+            cardTitle.textContent = item.title;
+            header.append(idLine, cardTitle);
+            const toggleHint = document.createElement('div');
+            toggleHint.className = 'section-recruiter-card-toggle-hint';
+            toggleHint.textContent = 'DETAILS';
+            header.appendChild(toggleHint);
+            const details = document.createElement('div');
+            details.className = 'section-recruiter-card-details';
+
+            const createRow = (labelText, valueText) => {
+                if (!valueText) return null;
+                const row = document.createElement('div');
+                row.className = 'section-recruiter-card-row';
+                
+                const key = document.createElement('span');
+                key.className = 'section-recruiter-card-key';
+                key.textContent = labelText;
+
+                const val = document.createElement('span');
+                val.className = 'section-recruiter-card-value';
+                val.textContent = valueText;
+
+                row.append(key, val);
+                return row;
+            };
+
+            const problemRow = createRow('PROBLEM', item.problem);
+            const actionRow = createRow('ACTION', item.action);
+            const impactRow = createRow('IMPACT', item.impact);
+
+            if (problemRow) details.appendChild(problemRow);
+            if (actionRow) details.appendChild(actionRow);
+            if (impactRow) details.appendChild(impactRow);
+
+            if (item.anchorId) {
+                const btn = document.createElement('button');
+                btn.className = 'card-extra-btn';
+                btn.style.width = '100%';
+                btn.style.marginTop = '0.8rem';
+                btn.textContent = '아키텍처 상세보기';
+                btn.onclick = (e) => { 
+                    e.stopPropagation(); 
+                    revealHashTarget(item.anchorId); 
+                    
+                    // GA4 Tracking
+                    trackSelectContent({
+                        contentType: 'recruiter_quick_brief_goto',
+                        itemId: item.id || 'unknown_arch',
+                        itemName: item.title || 'unknown_arch',
+                        sectionName: 'recruiter_quick_brief',
+                        interactionAction: 'click_goto_detail',
+                        elementType: 'button',
+                        elementLabel: '아키텍처 상세보기',
+                        linkUrl: `#${item.anchorId}`
+                    });
+                };
+                details.appendChild(btn);
+            }
+            card.append(header, details);
+            card.onclick = () => {
+                const isExpanded = card.classList.toggle('is-expanded');
+                
+                // GA4 Tracking
+                trackSelectContent({
+                    contentType: 'recruiter_quick_brief_card',
+                    itemId: item.id || 'unknown_arch',
+                    itemName: item.title || 'unknown_arch',
+                    sectionName: 'recruiter_quick_brief',
+                    interactionAction: isExpanded ? 'expand' : 'collapse',
+                    elementType: 'article',
+                    elementLabel: item.id || 'unknown_arch'
+                });
+            };
+            grid.appendChild(card);
+        });
+        wrapper.appendChild(grid);
+    }
+    const actions = document.createElement('div');
+    actions.className = 'section-recruiter-actions';
+    wrapper.appendChild(actions);
+    return wrapper;
+}
+
+function ensureCaseCardVisible(targetId) {
+    const id = targetId.replace(/^#/, '');
+    let revealed = false;
+    caseShowcaseControllers.forEach(c => { if (c.revealCase(id)) revealed = true; });
+    return revealed;
+}
+
+function revealHashTarget(hash) {
+    const id = hash.replace(/^#/, '');
+    if (!id) return;
+    ensureCaseCardVisible(id);
+    setTimeout(() => {
+        const target = byId(id);
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        target.classList.remove('is-target-highlight');
+        void target.offsetWidth;
+        target.classList.add('is-target-highlight');
+    }, 100);
+}
+
 function renderServiceSections() {
     const container = byId('service-sections');
-    if (!container) {
-        return;
-    }
+    if (!container) return;
     container.replaceChildren();
-
-    const sections = Array.isArray(templateConfig.serviceSections) ? templateConfig.serviceSections : [];
-    sections.forEach((sectionConfig) => {
-        const sectionWrapper = document.createElement('section');
-        sectionWrapper.className = 'service-section';
-        sectionWrapper.id = sectionConfig.id ?? '';
-
+    caseShowcaseControllers = [];
+    (templateConfig.serviceSections || []).forEach(sec => {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'service-section';
+        wrapper.id = sec.id ?? '';
         const header = document.createElement('div');
         header.className = 'section-header';
-        const heading = document.createElement('h2');
-        heading.className = 'section-title';
-        heading.textContent = sectionConfig.title ?? 'SERVICES';
-        header.appendChild(heading);
-
-        const grid = document.createElement('div');
-        grid.className = 'service-grid';
-
-        const groups = Array.isArray(sectionConfig.groups) && sectionConfig.groups.length > 0
-            ? sectionConfig.groups
-            : [{ title: '', desc: '', cards: sectionConfig.cards ?? [] }];
-
-        groups.forEach((group) => {
-            if (group.title || group.desc) {
-                grid.appendChild(createGroupDivider(group, sectionConfig.theme));
-            }
-
-            const cards = Array.isArray(group.cards) ? group.cards : [];
-            cards.forEach((card) => {
-                grid.appendChild(createServiceCard(card, sectionConfig));
+        const h2 = document.createElement('h2');
+        h2.className = 'section-title';
+        h2.textContent = sec.title ?? '';
+        header.appendChild(h2);
+        const brief = createSectionRecruiterBrief(sec);
+        const groupsContainer = document.createElement('div');
+        groupsContainer.className = 'service-groups';
+        const renderedCards = [];
+        const groups = sec.groups || [{ cards: sec.cards || [] }];
+        groups.forEach(g => {
+            const gSec = document.createElement('div');
+            gSec.className = 'service-group';
+            if (g.title || g.desc) gSec.appendChild(createGroupDivider(g, sec.theme));
+            const grid = document.createElement('div');
+            grid.className = 'service-grid';
+            (g.cards || []).forEach(c => {
+                const el = createServiceCard(c, sec);
+                grid.appendChild(el);
+                renderedCards.push({ id: c.mermaidId || el.id, el });
             });
+            gSec.appendChild(grid);
+            groupsContainer.appendChild(gSec);
         });
 
-        sectionWrapper.append(header, grid);
-        container.appendChild(sectionWrapper);
+        wrapper.append(header);
+        if (brief) wrapper.appendChild(brief);
+        wrapper.appendChild(groupsContainer);
+        container.appendChild(wrapper);
     });
 }
 
 function renderContact() {
-    const contact = templateConfig.contact ?? {};
-    const section = byId('contact');
+    const c = templateConfig.contact ?? {};
     const actions = byId('contact-actions');
-
-    if (section && contact.sectionId) {
-        section.id = contact.sectionId;
-    }
-    setText('contact-panel-title', contact.panelTitle);
-    setText('contact-panel-uid', contact.panelUid);
-    setText('contact-description', contact.description);
-
-    if (!actions) {
-        return;
-    }
+    setText('contact-panel-title', c.panelTitle);
+    setText('contact-panel-uid', c.panelUid);
+    setText('contact-description', c.description);
+    if (!actions) return;
     actions.replaceChildren();
-
-    const items = Array.isArray(contact.actions) ? contact.actions : [];
-    items.forEach((item) => {
-        const action = document.createElement('a');
-        action.className = 'action-btn';
-        action.href = item.href || '#';
-        action.textContent = item.label || 'LINK';
-        if (!String(item.href || '').startsWith('mailto:')) {
-            action.target = '_blank';
-            action.rel = 'noopener noreferrer';
-        }
-        actions.appendChild(action);
+    (c.actions || []).forEach(item => {
+        const a = document.createElement('a');
+        a.className = 'action-btn';
+        a.href = item.href || '#';
+        a.textContent = item.label || 'LINK';
+        if (!String(item.href).startsWith('mailto:')) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        actions.appendChild(a);
     });
-}
-
-function buildDefaultNavigation() {
-    const items = [];
-
-    const hero = templateConfig.hero ?? {};
-    const skills = templateConfig.skills ?? {};
-    const contact = templateConfig.contact ?? {};
-
-    items.push({
-        label: hero.panelTitle || 'SYSTEM_ARCHITECTURE',
-        target: normalizeHashTarget(hero.sectionId || 'system-architecture')
-    });
-
-    const topPanels = Array.isArray(templateConfig.topPanels) ? templateConfig.topPanels : [];
-    const serviceSections = Array.isArray(templateConfig.serviceSections) ? templateConfig.serviceSections : [];
-    const candidates = [];
-    let sequence = 0;
-
-    topPanels.forEach((panel, index) => {
-        candidates.push({
-            label: panel.navLabel || panel.panelTitle || `TOP_PANEL_${index + 1}`,
-            target: normalizeHashTarget(panel.sectionId || `top-panel-${index + 1}`),
-            sequence: sequence += 1
-        });
-    });
-
-    candidates.push({
-        label: skills.panelTitle || 'SKILL_SET',
-        target: normalizeHashTarget(skills.sectionId || 'skill-set'),
-        sequence: sequence += 1
-    });
-
-    serviceSections.forEach((section) => {
-        candidates.push({
-            label: section.navLabel || section.title || section.id || 'SERVICES',
-            target: normalizeHashTarget(section.id || ''),
-            sequence: sequence += 1
-        });
-    });
-
-    const resolveTargetTop = (target) => {
-        const targetId = String(target || '').replace(/^#/, '');
-        if (!targetId) {
-            return Number.POSITIVE_INFINITY;
-        }
-        const targetElement = byId(targetId);
-        if (!targetElement) {
-            return Number.POSITIVE_INFINITY;
-        }
-        return targetElement.getBoundingClientRect().top + window.scrollY;
-    };
-
-    candidates
-        .sort((left, right) => {
-            const topDiff = resolveTargetTop(left.target) - resolveTargetTop(right.target);
-            if (Math.abs(topDiff) > 0.5) {
-                return topDiff;
-            }
-            return left.sequence - right.sequence;
-        })
-        .forEach((item) => {
-            items.push({
-                label: item.label,
-                target: item.target
-            });
-        });
-
-    items.push({
-        label: contact.panelTitle || 'CONTACT',
-        target: normalizeHashTarget(contact.sectionId || 'contact')
-    });
-
-    return items;
 }
 
 function renderNavigation() {
     const nav = byId('header-nav');
-    if (!nav) {
-        return;
-    }
+    if (!nav) return;
     nav.replaceChildren();
-
-    const configuredNav = Array.isArray(templateConfig.navigation) && templateConfig.navigation.length > 0
-        ? templateConfig.navigation
-        : buildDefaultNavigation();
-
-    configuredNav.forEach((item) => {
-        const link = document.createElement('a');
-        link.className = 'nav-item';
-        link.href = normalizeHashTarget(item.target);
-        link.textContent = item.label || 'SECTION';
-        nav.appendChild(link);
+    const items = templateConfig.navigation || [
+        { label: 'ARCHITECTURE', target: '#system-architecture' },
+        { label: 'SKILLS', target: '#skill-set' },
+        { label: 'SERVICES', target: '#backend-services' },
+        { label: 'CONTACT', target: '#contact' }
+    ];
+    items.forEach(item => {
+        const a = document.createElement('a');
+        a.className = 'nav-item';
+        a.href = item.target;
+        a.textContent = item.label;
+        nav.appendChild(a);
     });
 }
 
 function setupScrollSpy() {
-    const nav = byId('header-nav');
-    if (!nav) {
-        return;
-    }
-
-    const links = Array.from(nav.querySelectorAll('.nav-item, .nav-sub-item'));
-    if (links.length === 0) {
-        return;
-    }
-
-    const targetMap = new Map();
-    links.forEach((link) => {
-        const href = String(link.getAttribute('href') || '');
-        if (!href.startsWith('#') || href.length < 2) {
-            return;
-        }
-
-        const targetId = href.slice(1);
-        const targetElement = byId(targetId);
-        if (!targetElement) {
-            return;
-        }
-
-        if (!targetMap.has(targetId)) {
-            targetMap.set(targetId, {
-                element: targetElement,
-                links: []
-            });
-        }
-        targetMap.get(targetId).links.push(link);
-    });
-
-    if (targetMap.size === 0) {
-        return;
-    }
-
-    let sortedTargets = [];
-    let currentActiveId = '';
-    let rafToken = 0;
-
-    const clearActive = () => {
-        links.forEach((link) => link.classList.remove('is-active'));
-    };
-
-    const activateTarget = (targetId) => {
-        if (!targetId || currentActiveId === targetId) {
-            return;
-        }
-        currentActiveId = targetId;
-        clearActive();
-
-        const matched = targetMap.get(targetId);
-        if (!matched) {
-            return;
-        }
-
-        matched.links.forEach((link) => link.classList.add('is-active'));
-    };
-
-    const rebuildTargetOrder = () => {
-        sortedTargets = Array.from(targetMap.entries())
-            .map(([targetId, payload]) => ({
-                targetId,
-                top: payload.element.getBoundingClientRect().top + window.scrollY
-            }))
-            .sort((left, right) => left.top - right.top);
-    };
-
-    const applyByScrollPosition = () => {
-        if (sortedTargets.length === 0) {
-            return;
-        }
-
+    const links = Array.from(document.querySelectorAll('.nav-item'));
+    if (links.length === 0) return;
+    window.addEventListener('scroll', () => {
         const headerHeight = document.querySelector('.status-bar')?.offsetHeight ?? 0;
-        const baseline = window.scrollY + headerHeight + 28;
-        let activeId = sortedTargets[0].targetId;
-
-        for (let index = 0; index < sortedTargets.length; index += 1) {
-            if (baseline >= sortedTargets[index].top) {
-                activeId = sortedTargets[index].targetId;
-            } else {
-                break;
-            }
-        }
-
-        activateTarget(activeId);
-    };
-
-    const scheduleUpdate = () => {
-        if (rafToken !== 0) {
-            return;
-        }
-        rafToken = window.requestAnimationFrame(() => {
-            rafToken = 0;
-            applyByScrollPosition();
+        const baseline = window.scrollY + headerHeight + 50;
+        let activeId = '';
+        links.forEach(link => {
+            const id = link.getAttribute('href').slice(1);
+            const el = byId(id);
+            if (el && el.offsetTop <= baseline) activeId = id;
         });
-    };
-
-    rebuildTargetOrder();
-    applyByScrollPosition();
-
-    window.addEventListener('scroll', scheduleUpdate, { passive: true });
-    window.addEventListener('resize', () => {
-        rebuildTargetOrder();
-        scheduleUpdate();
-    });
-    window.addEventListener('hashchange', scheduleUpdate);
-
-    window.setTimeout(() => {
-        rebuildTargetOrder();
-        scheduleUpdate();
-    }, 160);
-    window.setTimeout(() => {
-        rebuildTargetOrder();
-        scheduleUpdate();
-    }, 720);
-}
-
-function injectMermaidSources() {
-    const nodes = Array.from(document.querySelectorAll('.mermaid'));
-    const diagrams = templateConfig.diagrams ?? {};
-
-    nodes.forEach((container) => {
-        const mermaidId = container.getAttribute('data-mermaid-id') || '';
-        if (mermaidId && diagrams[mermaidId]) {
-            container.innerHTML = diagrams[mermaidId];
-            return;
-        }
-
-        const label = toSafeLabel(mermaidId || 'undefined_id');
-        container.innerHTML = `
-            graph TD
-            A[${label}] --> B[Define templateConfig.diagrams entry]
-        `;
-    });
-
-    return nodes;
-}
-
-function setupMermaidModal() {
-    const modal = byId('mermaid-modal');
-    const modalContent = byId('mermaid-modal-content');
-    const modalTitle = byId('mermaid-modal-title');
-    const modalDialog = modal?.querySelector('.mermaid-modal-dialog') ?? null;
-
-    if (!modal || !modalContent || !modalTitle || !modalDialog) {
-        return;
-    }
-
-    const targets = document.querySelectorAll('.graph-container, .card-visual');
-    const ZOOM_STEP = 0.15;
-    const ZOOM_MIN = 0.55;
-    const ZOOM_MAX = 3;
-
-    let zoom = 1;
-    let activeSvg = null;
-    let activeCanvas = null;
-    let baseSvgWidth = 0;
-    let baseSvgHeight = 0;
-    let isPanning = false;
-    let panStartX = 0;
-    let panStartY = 0;
-    let panStartScrollLeft = 0;
-    let panStartScrollTop = 0;
-
-    let controls = modal.querySelector('.mermaid-modal-controls');
-    if (!controls) {
-        controls = document.createElement('div');
-        controls.className = 'mermaid-modal-controls';
-        controls.innerHTML = `
-            <button class="mermaid-zoom-btn" type="button" data-mermaid-zoom="out" aria-label="Zoom out">-</button>
-            <button class="mermaid-zoom-btn" type="button" data-mermaid-zoom="reset" aria-label="Reset zoom">RESET</button>
-            <button class="mermaid-zoom-btn" type="button" data-mermaid-zoom="in" aria-label="Zoom in">+</button>
-            <span class="mermaid-zoom-value" aria-live="polite">100%</span>
-        `;
-        modalDialog.appendChild(controls);
-    }
-
-    const zoomValue = controls.querySelector('.mermaid-zoom-value');
-
-    const centerModalView = () => {
-        const maxLeft = modalContent.scrollWidth - modalContent.clientWidth;
-        if (maxLeft > 0) {
-            modalContent.scrollLeft = Math.floor(maxLeft / 2);
-            return;
-        }
-        modalContent.scrollLeft = 0;
-    };
-
-    const scheduleCenterModalView = () => {
-        window.requestAnimationFrame(() => {
-            centerModalView();
-            window.requestAnimationFrame(centerModalView);
-        });
-    };
-
-    const endPan = () => {
-        if (!isPanning) {
-            return;
-        }
-        isPanning = false;
-        modalContent.classList.remove('is-panning');
-    };
-
-    const applyZoom = () => {
-        if (!activeSvg || !activeCanvas) {
-            return;
-        }
-
-        const nextWidth = Math.max(1, Math.round(baseSvgWidth * zoom));
-        const nextHeight = Math.max(1, Math.round(baseSvgHeight * zoom));
-        activeCanvas.style.width = `${nextWidth}px`;
-        activeCanvas.style.height = `${nextHeight}px`;
-        activeSvg.style.maxWidth = 'none';
-        activeSvg.style.width = '100%';
-        activeSvg.style.height = '100%';
-        activeSvg.setAttribute('width', String(baseSvgWidth));
-        activeSvg.setAttribute('height', String(baseSvgHeight));
-
-        if (zoom > 1.001) {
-            modalContent.classList.add('can-pan');
-        } else {
-            endPan();
-            modalContent.classList.remove('can-pan');
-        }
-
-        if (zoomValue) {
-            zoomValue.textContent = `${Math.round(zoom * 100)}%`;
-        }
-    };
-
-    const setZoom = (nextZoom) => {
-        const clampedZoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, nextZoom));
-        if (Math.abs(clampedZoom - zoom) < 0.0001) {
-            return;
-        }
-        zoom = clampedZoom;
-        applyZoom();
-    };
-
-    const closeModal = () => {
-        modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
-        modalContent.replaceChildren();
-        endPan();
-        modalContent.classList.remove('can-pan');
-        activeSvg = null;
-        activeCanvas = null;
-        baseSvgWidth = 0;
-        baseSvgHeight = 0;
-        zoom = 1;
-        if (zoomValue) {
-            zoomValue.textContent = '100%';
-        }
-        document.body.classList.remove('modal-open');
-    };
-
-    const openModal = (target) => {
-        const sourceSvg = target.querySelector('.mermaid svg');
-        if (!sourceSvg) {
-            return;
-        }
-
-        const clonedSvg = sourceSvg.cloneNode(true);
-        clonedSvg.style.maxWidth = 'none';
-        clonedSvg.style.width = '100%';
-        clonedSvg.style.height = '100%';
-
-        const viewBox = sourceSvg.getAttribute('viewBox');
-        let calculatedBaseWidth = 0;
-        let calculatedBaseHeight = 0;
-        if (viewBox) {
-            const parts = viewBox.trim().split(/\s+/).map(Number);
-            if (parts.length === 4 && parts.every(Number.isFinite)) {
-                const modalBaseScale = 1.08;
-                calculatedBaseWidth = Math.round(parts[2] * modalBaseScale);
-                calculatedBaseHeight = Math.round(parts[3] * modalBaseScale);
-            }
-        }
-
-        if (calculatedBaseWidth <= 0 || calculatedBaseHeight <= 0) {
-            const rect = sourceSvg.getBoundingClientRect();
-            const modalBaseScale = 1.08;
-            calculatedBaseWidth = Math.max(1, Math.round(rect.width * modalBaseScale));
-            calculatedBaseHeight = Math.max(1, Math.round(rect.height * modalBaseScale));
-        }
-
-        baseSvgWidth = calculatedBaseWidth;
-        baseSvgHeight = calculatedBaseHeight;
-
-        clonedSvg.setAttribute('width', String(baseSvgWidth));
-        clonedSvg.setAttribute('height', String(baseSvgHeight));
-
-        const canvas = document.createElement('div');
-        canvas.className = 'mermaid-modal-canvas';
-        canvas.style.width = `${baseSvgWidth}px`;
-        canvas.style.height = `${baseSvgHeight}px`;
-        canvas.appendChild(clonedSvg);
-
-        modalContent.replaceChildren(canvas);
-        modalContent.scrollLeft = 0;
-        modalContent.scrollTop = 0;
-        activeCanvas = canvas;
-        activeSvg = clonedSvg;
-        zoom = 1;
-        applyZoom();
-
-        const titleText =
-            target.closest('.service-card')?.querySelector('.card-title')?.textContent?.trim() ||
-            target.closest('.hero-panel')?.querySelector('.panel-title')?.textContent?.trim() ||
-            'Mermaid Diagram';
-        modalTitle.textContent = titleText;
-
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('modal-open');
-        scheduleCenterModalView();
-    };
-
-    controls.querySelectorAll('[data-mermaid-zoom]').forEach((button) => {
-        button.addEventListener('click', (event) => {
-            const control = event.currentTarget;
-            if (!(control instanceof HTMLElement)) {
-                return;
-            }
-            const action = control.getAttribute('data-mermaid-zoom');
-            if (!action || !modal.classList.contains('is-open')) {
-                return;
-            }
-
-            if (action === 'in') {
-                setZoom(zoom + ZOOM_STEP);
-                return;
-            }
-            if (action === 'out') {
-                setZoom(zoom - ZOOM_STEP);
-                return;
-            }
-            zoom = 1;
-            applyZoom();
-            scheduleCenterModalView();
-        });
-    });
-
-    modalContent.addEventListener('wheel', (event) => {
-        if (!modal.classList.contains('is-open') || !activeSvg || !event.ctrlKey) {
-            return;
-        }
-        event.preventDefault();
-        if (event.deltaY < 0) {
-            setZoom(zoom + ZOOM_STEP);
-            return;
-        }
-        setZoom(zoom - ZOOM_STEP);
-    }, { passive: false });
-
-    modalContent.addEventListener('pointerdown', (event) => {
-        if (!modal.classList.contains('is-open') || !activeSvg || zoom <= 1.001) {
-            return;
-        }
-        if (event.button !== 0) {
-            return;
-        }
-        isPanning = true;
-        panStartX = event.clientX;
-        panStartY = event.clientY;
-        panStartScrollLeft = modalContent.scrollLeft;
-        panStartScrollTop = modalContent.scrollTop;
-        modalContent.classList.add('is-panning');
-        event.preventDefault();
-    });
-
-    modalContent.addEventListener('pointermove', (event) => {
-        if (!isPanning) {
-            return;
-        }
-        const deltaX = event.clientX - panStartX;
-        const deltaY = event.clientY - panStartY;
-        modalContent.scrollLeft = panStartScrollLeft - deltaX;
-        modalContent.scrollTop = panStartScrollTop - deltaY;
-        event.preventDefault();
-    });
-
-    modalContent.addEventListener('pointerup', endPan);
-    modalContent.addEventListener('pointercancel', endPan);
-    modalContent.addEventListener('pointerleave', (event) => {
-        if (isPanning && !(event.buttons & 1)) {
-            endPan();
-        }
-    });
-
-    targets.forEach((target) => {
-        target.classList.add('mermaid-zoom-target');
-        target.setAttribute('tabindex', '0');
-        target.setAttribute('role', 'button');
-        target.setAttribute('aria-label', 'Open expanded Mermaid diagram');
-
-        target.addEventListener('click', () => openModal(target));
-        target.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                openModal(target);
-            }
-        });
-    });
-
-    modal.querySelectorAll('[data-mermaid-close]').forEach((closeButton) => {
-        closeButton.addEventListener('click', closeModal);
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (!modal.classList.contains('is-open')) {
-            return;
-        }
-        if (event.key === 'Escape') {
-            closeModal();
-            return;
-        }
-        if (event.key === '+' || event.key === '=') {
-            event.preventDefault();
-            setZoom(zoom + ZOOM_STEP);
-            return;
-        }
-        if (event.key === '-' || event.key === '_') {
-            event.preventDefault();
-            setZoom(zoom - ZOOM_STEP);
-            return;
-        }
-        if (event.key === '0') {
-            event.preventDefault();
-            zoom = 1;
-            applyZoom();
-            scheduleCenterModalView();
-        }
+        links.forEach(l => l.classList.toggle('is-active', l.getAttribute('href').slice(1) === activeId));
     });
 }
 
@@ -1278,23 +727,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderNavigation();
     setupUptime();
     setupMobileNav();
-
-    const mermaidNodes = injectMermaidSources();
-    for (let index = 0; index < mermaidNodes.length; index += 1) {
-        const node = mermaidNodes[index];
-        const tempClass = `mermaid-render-target-${index}`;
-        node.classList.add(tempClass);
-        try {
-            await mermaid.run({ querySelector: `.${tempClass}` });
-        } catch (error) {
-            console.error('Mermaid render failed for node:', node, error);
-            const failedId = node.getAttribute('data-mermaid-id') || 'unknown';
-            node.innerHTML = `<p style="margin:0;color:#ffb4b4;">Diagram render failed: ${failedId}</p>`;
-        } finally {
-            node.classList.remove(tempClass);
+    const nodes = Array.from(document.querySelectorAll('.mermaid'));
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        const mermaidId = node.getAttribute('data-mermaid-id');
+        if (mermaidId && templateConfig.diagrams[mermaidId]) {
+            node.innerHTML = templateConfig.diagrams[mermaidId];
+            try {
+                const tempClass = `mermaid-render-${i}`;
+                node.classList.add(tempClass);
+                await mermaid.run({ querySelector: `.${tempClass}` });
+            } catch (e) {
+                node.innerHTML = `<p style="color:#ffb4b4;">Render Error: ${mermaidId}</p>`;
+            }
         }
     }
-
     setupMermaidModal();
     setupScrollSpy();
+    if (window.location.hash) revealHashTarget(window.location.hash);
+    window.onhashchange = () => revealHashTarget(window.location.hash);
 });
+
+function setupMermaidModal() {
+    const modal = byId('mermaid-modal');
+    const content = byId('mermaid-modal-content');
+    const closeBtns = document.querySelectorAll('[data-mermaid-close]');
+    if (!modal || !content) return;
+    document.querySelectorAll('.mermaid').forEach(node => {
+        node.style.cursor = 'zoom-in';
+        node.onclick = () => {
+            const svg = node.querySelector('svg');
+            if (svg) {
+                content.innerHTML = '';
+                const clone = svg.cloneNode(true);
+                clone.style.width = '100%';
+                clone.style.height = 'auto';
+                content.appendChild(clone);
+                modal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+        };
+    });
+    closeBtns.forEach(b => b.onclick = () => {
+        modal.classList.remove('is-open');
+        document.body.classList.remove('modal-open');
+    });
+}
