@@ -67,7 +67,7 @@ export const templateConfig = {
         panelTitle: 'SKILL_SET',
         panelUid: 'ID: STACK-MAP',
         items: [
-            { title: "BACKEND CORE", stack: "JDK 17, Spring Boot 3.1, Spring Security, JPA, QueryDSL" },
+            { title: "BACKEND CORE", stack: "JDK 17, Spring Boot 3.1, Spring Security, JPA" },
             { title: "REALTIME", stack: "WebSocket, STOMP, SSE, ChannelInterceptor, event-driven messaging" },
             { title: "SECURITY", stack: "JWT, Kakao OAuth2, CORS whitelist policy, dynamic blacklist control" },
             { title: "DATA LAYER", stack: "MariaDB, Redis, Specification-based filtering, pessimistic locking" },
