@@ -487,7 +487,8 @@ function createSectionRecruiterBrief(sectionConfig) {
         title: String(item?.title || '').trim(),
         problem: String(item?.problem || '').trim(),
         action: String(item?.action || '').trim(),
-        impact: String(item?.impact || '').trim()
+        impact: String(item?.impact || '').trim(),
+        links: item?.links || []
     })).filter(i => i.id || i.title);
 
     const wrapper = document.createElement('section');
@@ -552,7 +553,46 @@ function createSectionRecruiterBrief(sectionConfig) {
             if (actionRow) details.appendChild(actionRow);
             if (impactRow) details.appendChild(impactRow);
 
-            if (item.anchorId) {
+            // [추가] links 지원 (L_N 스타일 확장)
+            if (Array.isArray(item.links)) {
+                item.links.forEach(l => {
+                    const btn = document.createElement('a');
+                    btn.className = 'card-extra-btn';
+                    btn.style.display = 'block';
+                    btn.style.width = '100%';
+                    btn.style.marginTop = '0.8rem';
+                    btn.style.textAlign = 'center';
+                    btn.href = l.href;
+                    btn.textContent = l.label;
+                    if (!String(l.href).startsWith('#')) {
+                        btn.target = '_blank';
+                        btn.rel = 'noopener noreferrer';
+                    }
+                    btn.onclick = (e) => {
+                        if (String(l.href).startsWith('#')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const hash = String(l.href);
+                            revealHashTarget(hash);
+                            
+                            // GA4 Tracking
+                            trackSelectContent({
+                                contentType: 'recruiter_quick_brief_goto',
+                                itemId: item.id || 'unknown_arch',
+                                itemName: item.title || 'unknown_arch',
+                                sectionName: 'recruiter_quick_brief',
+                                interactionAction: 'click_goto_detail',
+                                elementType: 'link',
+                                elementLabel: l.label,
+                                linkUrl: l.href
+                            });
+                        }
+                    };
+                    details.appendChild(btn);
+                });
+            }
+
+            if (item.anchorId && item.anchorId !== '#') {
                 const btn = document.createElement('button');
                 btn.className = 'card-extra-btn';
                 btn.style.width = '100%';

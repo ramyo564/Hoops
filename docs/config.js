@@ -48,11 +48,17 @@ export const templateConfig = {
         panelUid: "ID: HOOPS-SYS-00",
         diagramId: 'hoops-system-overview',
         metrics: [
-            "서비스: 위치 기반 실시간 농구 경기 매칭 소셜 플랫폼",
-            "통신 채널: REST API + WebSocket(STOMP) + SSE 알림 스트림",
-            "핵심 워크플로우: 경기 관리, 소셜 그래프(초대/친구), 신고/제재 거버넌스",
-            "배포 파이프라인: GitHub Actions -> Docker Hub -> EC2 Self-hosted",
-            "데이터 레이어: MariaDB(정합성), Redis(인증/세션/에미터)"
+            "Architecture: Layered (Controller-Service-Repository) for Scalability",
+            "Real-time: WebSocket(STOMP) + SSE Multi-channel Messaging",
+            "Result: Deploy Time 80% Reduction (15m -> 3m), Image 58% Size Down",
+            "Governance: Real-time Ban Enforcement with Redis Blacklist",
+            "Security: JWT + OAuth2 (Kakao) + WebSocket Channel Interceptor",
+            "Maintenance: JPA Specification Standardization for Dynamic Queries"
+        ],
+        quickLinks: [
+            { label: 'PROBLEM_SOLVING', href: 'https://ramyo564.github.io/Hoops-portfolio/', variant: 'primary' },
+            { label: 'GITHUB_REPO', href: 'https://github.com/ramyo564/Hoops', variant: 'secondary' },
+            { label: 'PORTFOLIO_HUB', href: 'https://ramyo564.github.io/Portfolio/', variant: 'ghost' }
         ]
     },
 
@@ -90,50 +96,59 @@ export const templateConfig = {
 
     serviceSections: [
         {
+            id: 'architecture-quick-scan',
+            title: 'ARCHITECTURE_QUICK_SCAN',
+            navLabel: 'QUICK_SCAN',
+            theme: 'blue',
+            recruiterBrief: {
+                kicker: 'CORE_SYSTEM_PILLARS',
+                title: 'Hoops 시스템 설계 핵심 요약 (Architecture Overview)',
+                cases: [
+                    {
+                        id: 'Realtime',
+                        title: '실시간 메시징 정합성 확보',
+                        problem: '메시지 타입 혼선 및 재입장 시 이력 중복 노출 이슈',
+                        action: 'STOMP 목적지(Destination) 분리 및 유저별 세션 라우팅 가드 구축',
+                        impact: '실시간 채팅 무결성 확보 및 사용자 경험(UX) 안정화',
+                        links: [{ label: 'SHOW_REALTIME_DETAILS', href: '#hoops-chat-realtime' }]
+                    },
+                    {
+                        id: 'Security',
+                        title: '다층 보안 거버넌스 체계',
+                        problem: '인증 이후의 실시간 세션 제재 공백 및 비인가 접근 리스크',
+                        action: 'WebSocket Interceptor 기반 블랙리스트/참여여부 강제 인가 연동',
+                        impact: '악성 사용자 즉각 격리 및 비인가 접근 100% 차단 실현',
+                        links: [{ label: 'SHOW_SECURITY_DETAILS', href: '#hoops-ws-security-fix' }]
+                    },
+                    {
+                        id: 'Query',
+                        title: '동적 쿼리 엔진 표준화',
+                        problem: '다양한 검색 조건 증가로 인한 코드 스파게티 및 유지보수성 저하',
+                        action: 'JPA Specification 기반 쿼리 합성 구조 도입 및 엔드포인트 단일화',
+                        impact: '쿼리 로직 90% 표준화 및 신규 조건 추가 생산성 극대화',
+                        links: [{ label: 'SHOW_QUERY_DETAILS', href: '#hoops-dynamic-search-spec' }]
+                    },
+                    {
+                        id: 'DevOps',
+                        title: '배포 파이프라인 고도화',
+                        problem: '수동 배포 환경의 인적 오류 리스크 및 긴 리드타임',
+                        action: 'Multi-stage 빌드 적용 및 GitHub Actions 기반 자동화 루프 구축',
+                        impact: '배포 시간 80% 단축 및 이미지 크기 58% 절감 (600MB -> 250MB)',
+                        links: [{ label: 'SHOW_DEVOPS_DETAILS', href: '#hoops-multi-stage-build' }]
+                    }
+                ],
+                links: [
+                    { label: 'PROBLEM_SOLVING', href: 'https://ramyo564.github.io/Hoops-portfolio/', variant: 'primary' }
+                ]
+            }
+        },
+        {
             id: 'backend-services',
             title: 'BACKEND_SERVICES',
             navLabel: '백엔드 서비스',
             theme: 'blue',
             cardVisualHeight: '290px',
             cardClass: 'backend-card',
-            recruiterBrief: {
-                kicker: 'ARCHITECTURE_QUICK_SCAN',
-                title: '시스템 설계 핵심 요약 (이력서 연동 항목)',
-                cases: [
-                    {
-                        id: 'Realtime',
-                        anchorId: 'hoops-chat-realtime',
-                        title: 'WebSocket 기반 실시간성 확보',
-                        problem: '메시징 정합성 및 중복 이력 노출 이슈',
-                        action: 'STOMP 목적지 분리 및 유저별 세션 라우팅 최적화',
-                        impact: '실시간 채팅 정합성 확보 및 UX 지연 제거'
-                    },
-                    {
-                        id: 'Security',
-                        anchorId: 'hoops-ws-security-fix',
-                        title: 'WebSocket 다층 인가 체계',
-                        problem: '핸드쉐이크 이후 보안 공백 및 비인가 접근 리스크',
-                        action: 'ChannelInterceptor 연동 블랙리스트/참여여부 강제 검증',
-                        impact: '제재 즉시 반영 및 비인가 접근 100% 차단'
-                    },
-                    {
-                        id: 'Query',
-                        anchorId: 'hoops-dynamic-search-spec',
-                        title: '동적 쿼리 표준화 (Specification)',
-                        problem: '복합 검색 조건 증가로 인한 코드 복잡도 및 유지보수 비용 상승',
-                        action: 'JPA Specification 기반 쿼리 합성 구조 도입 및 엔드포인트 통합',
-                        impact: '단일 API 계약 유지 및 쿼리 확장성 확보'
-                    },
-                    {
-                        id: 'DevOps',
-                        anchorId: 'hoops-multi-stage-build',
-                        title: '배포 효율 및 이미지 경량화',
-                        problem: '수동 배포 리드타임 지연 및 과도한 이미지 크기',
-                        action: 'Multi-stage 빌드 적용 및 GitHub Actions 자동화 루프 구축',
-                        impact: '배포 시간 80% 단축 및 이미지 크기 58% 절감'
-                    }
-                ]
-            },
             groups: [
                 {
                     title: "CORE DOMAINS",
@@ -184,6 +199,7 @@ export const templateConfig = {
         panelUid: 'ID: COMMS-01',
         description: "Submit transmission to initiate collaboration.",
         actions: [
+            { label: 'GITHUB_REPO', href: 'https://github.com/ramyo564/Hoops' },
             { label: "SEND_EMAIL", href: "mailto:yohan032yohan@gmail.com" },
             { label: "GITHUB", href: "https://github.com/ramyo564" },
             { label: "EVIDENCE", href: "./evidence/hoops/index.html" },
